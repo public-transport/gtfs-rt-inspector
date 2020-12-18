@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+
+.nvm-version
+node_modules
+pnpm-debug.log
+
+/dist
+!/dist/index.html
