@@ -1,15 +1,19 @@
 import {h} from 'preact'
 
 const mainView = (state, emit) => {
-	const handleClick = () => {
-		emit('clicks:add', 1)
+	const handleFeedUrlInput = (ev) => {
+		emit('feed:set-url', ev.target.value)
+	}
+	const handleSyncClick = () => {
+		emit('feed:sync')
 	}
 
 	return (
-		<body>
-			<p>Number of clicks stored: {state.totalClicks}</p>
-			<button onClick={handleClick}>Emit a click event</button>
-		</body>
+		<div>
+			<p>{state.feedUrl}</p>
+			<input onInput={handleFeedUrlInput} value={state.feedUrl} />
+			<button onClick={handleSyncClick} disabled={!!state.feedSyncing}>↺</button>
+		</div>
 	)
 }
 
