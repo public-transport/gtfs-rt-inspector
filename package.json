@@ -23,9 +23,12 @@
 		"lint": "eslint ."
 	},
 	"dependencies": {
+		"buffer": "^6.0.3",
+		"content-type": "^1.0.4",
 		"core-js": "^3.8.1",
 		"events": "^3.2.0",
 		"fetch-periodic-sync": "^1.1.2",
+		"gtfs-rt-bindings": "^3.1.0",
 		"lodash": "^4.17.20",
 		"preact": "^10.5.7",
 		"regenerator-runtime": "^0.13.7"
