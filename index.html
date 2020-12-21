@@ -25,6 +25,50 @@
 			padding-right: .65em;
 			letter-spacing: -.65em;
 		}
+
+		.inspector {
+			margin: 1em;
+		}
+
+		.inspector table {
+			table-layout: fixed;
+			border-collapse: collapse;
+			text-align: left;
+		}
+		.inspector table th {
+			padding: .1em .2em;
+			vertical-align: bottom;
+			border: none;
+		}
+		.inspector table thead {
+			border-style: solid;
+			border-width: thin 0;
+			border-color: #333;
+		}
+		.inspector table tr:first-child th {
+			border-style: solid;
+			border-width: 0 thin 0 thin;
+			border-color: #333;
+		}
+		.inspector table tr:last-child th {
+			border-bottom-width: thin;
+		}
+		.inspector table th[colspan] {
+			text-align: center;
+		}
+		.inspector table td {
+			padding: .1em .15em;
+			border: solid thin #d0d0d0;
+		}
+		.inspector table tbody tr:first-child td {
+			border-top: none;
+		}
+		.inspector table tbody tr:nth-child(even) {
+			background-color: #fff;
+		}
+		.inspector table tbody tr:nth-child(odd) {
+			background-color: #f0f0f0;
+		}
 	</style>
 </head>
 <body>
