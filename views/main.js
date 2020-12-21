@@ -1,23 +1,14 @@
 import {h} from 'preact'
+import Bar from './bar'
+import Inspector from './inspector'
 
-const mainView = (state, emit) => {
-	const handleFeedUrlInput = (ev) => {
-		emit('feed:set-url', ev.target.value)
-	}
-	const handleSyncClick = () => {
-		emit('feed:sync')
-	}
-	const handleStopStartClick = () => {
-		if (state.feedSyncStopped) emit('feed:start-sync')
-		else emit('feed:stop-sync')
-	}
-
+const mainView = ({state, emit}) => {
 	return (
-		<div>
-			<p>{state.feedUrl}</p>
-			<input onInput={handleFeedUrlInput} value={state.feedUrl} />
-			<button onClick={handleSyncClick} disabled={!!state.feedSyncing}>↺</button>
-			<button onClick={handleStopStartClick}>{state.feedSyncStopped ? '▶️' : '⏸'}</button>
+		<div class="app">
+			<Bar state={state} emit={emit} />
+			{state.feedData ? (
+				<Inspector state={state} emit={emit} />
+			): null}
 		</div>
 	)
 }
