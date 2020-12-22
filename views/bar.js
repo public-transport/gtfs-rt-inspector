@@ -16,8 +16,8 @@ const barView = ({state, emit}) => {
 		<div class="bar">
 			<span class="logo">🚂🔍</span>
 			<input onInput={handleFeedUrlInput} value={state.feedUrl} />
-			<button onClick={handleSyncClick} disabled={!!state.feedSyncing}>↺</button>
-			<button onClick={handleStopStartClick}>{state.feedSyncStopped ? '▶️' : '⏸'}</button>
+			<button onClick={handleSyncClick} disabled={!state.feedUrl || !!state.feedSyncing}>↺</button>
+			<button onClick={handleStopStartClick} disabled={!state.feedUrl}>{state.feedSyncStopped ? '▶️' : '⏸'}</button>
 		</div>
 	)
 }

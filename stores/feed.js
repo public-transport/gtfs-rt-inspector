@@ -1,10 +1,15 @@
-import {debounce} from 'lodash'
+import debounce from 'lodash/debounce'
 import {parse as parseContentType} from 'content-type'
 const {Buffer} = require('buffer/') // trailing slash is intentional
 const {FeedMessage} = require('gtfs-rt-bindings')
 import * as syncViaPeriodicFetch from 'fetch-periodic-sync'
 
 const MAX_FEED_SIZE = 5 * 1024 * 1024 // 5mb
+
+const CONTENT_TYPES = [
+	'application/octet-stream', // generic "binary" blob
+	'application/grtfeed', // used by TriMet
+]
 
 const feedStore = (state, bus) => {
 	state.feedUrl = null
@@ -17,8 +22,8 @@ const feedStore = (state, bus) => {
 	const receiveAndParseFeed = async (res) => {
 		const cTypeHeader = res.headers.get('content-type')
 		const cType = cTypeHeader ? parseContentType(cTypeHeader) : {}
-		if (cType.type && cType.type !== 'application/octet-stream') {
-			const err = new Error('invalid content-type, only application/octet-stream is supported')
+		if (cType.type && !CONTENT_TYPES.includes(cType.type)) {
+			const err = new Error(`invalid content-type \`${cType.type}\`, only ${CONTENT_TYPES.join(', ')} are supported`)
 			err.response = res
 			throw err
 		}
@@ -60,7 +65,7 @@ const feedStore = (state, bus) => {
 			.catch(console.error)
 		})
 		// todo: error
-	}, 100)
+	}, 200)
 
 	bus.on('feed:set-url', (url) => {
 		if (url === state.feedUrl) return; // nothing changed, abort
