@@ -1,0 +1,21 @@
+name: lint, build and deploy
+on: push
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build
+
+      - name: deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          publish_dir: ./dist
