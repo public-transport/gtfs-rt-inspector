@@ -20,7 +20,7 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"start": "webpack serve --mode development",
-		"lint": "eslint ."
+		"lint": "eslint --ignore-path .gitignore ."
 	},
 	"dependencies": {
 		"buffer": "^6.0.3",

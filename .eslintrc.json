@@ -1,16 +1,19 @@
 {
 	"extends": "eslint:recommended",
 	"env": {
-		"commonjs": true,
+		"browser": true,
 		"es6": true,
 		"node": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 2018
+		"ecmaVersion": 2020,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"modules": true,
+			"impliedStrict": true,
+			"jsx": true
+		}
 	},
-	"ignorePatterns": [
-		"node_modules"
-	],
 	"rules": {
 		"no-unused-vars": "off"
 	}
