@@ -46,12 +46,12 @@ const feedStore = (state, bus) => {
 
 		state.feedRawData = buf
 		state.feedData = data
-		bus.emit('render')
+		bus.emit(bus.STATE_CHANGE)
 	}
 
 	const setSyncing = (syncing) => {
 		state.feedSyncing = syncing
-		bus.emit('render')
+		bus.emit(bus.STATE_CHANGE)
 	}
 	const resetSync = debounce(() => {
 		sync = syncViaPeriodicFetch(state.feedUrl, {
@@ -80,7 +80,7 @@ const feedStore = (state, bus) => {
 		state.feedSyncing = false
 		if (url !== null) resetSync()
 
-		bus.emit('render')
+		bus.emit(bus.STATE_CHANGE)
 	})
 
 	bus.on('feed:sync', () => {
@@ -91,14 +91,16 @@ const feedStore = (state, bus) => {
 		if (!sync || !sync.isActive()) return;
 		sync.stop()
 		state.feedSyncStopped = true
-		bus.emit('render')
+		bus.emit(bus.STATE_CHANGE)
 	})
 	bus.on('feed:start-sync', () => {
 		if (!sync || sync.isActive()) return;
 		sync.start()
 		state.feedSyncStopped = false
-		bus.emit('render')
+		bus.emit(bus.STATE_CHANGE)
 	})
+
+	// todo: listen on bus.STATE_CHANGE
 }
 
 export default feedStore
