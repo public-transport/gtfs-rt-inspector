@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime'
 
 import * as EventEmitter from 'events'
 import {render, h} from 'preact'
+import viewStore from './stores/view'
 import feedStore from './stores/feed'
 import urlStore from './stores/url'
 import Main from './views/main'
@@ -13,6 +14,7 @@ bus.STATE_CHANGE = Symbol('state change')
 bus.INITIAL_STATE = Symbol('initial state set up')
 const emit = bus.emit.bind(bus)
 
+viewStore(state, bus)
 feedStore(state, bus)
 urlStore(state, bus)
 setTimeout(emit, 0, bus.INITIAL_STATE)

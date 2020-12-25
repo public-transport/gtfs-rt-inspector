@@ -17,19 +17,68 @@
 			font-size: 105%;
 		}
 
+		.app {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+		.app > .view {
+			flex-grow: 1;
+			display: flex;
+		}
+
 		.bar {
-			display: block;
+			position: sticky;
+			top: 0;
+			display: flex;
+			flex-direction: row;
+			padding: 0.2em 0;
+			background-color: #e0e0e0;
+			border-bottom: thin solid #d0d0d0;
+		}
+		.bar > * {
+			margin-left: 1em;
+		}
+		.bar > :last-child {
+			margin-right: 1em;
 		}
 		.bar .logo {
-			display: inline-block;
 			padding-right: .65em;
 			letter-spacing: -.65em;
+			white-space: nowrap;
+		}
+		.bar > .nav, .bar > .feed {
+			flex-grow: 1;
+		}
+		.bar > .nav {
+			flex-basis: 70%;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.bar .nav li {
+			display: inline-block;
+		}
+		.bar .nav li a {
+			display: inline-block;
+			padding: .2em .5em;
+		}
+		.bar .nav li a, .bar .nav li a:visited {
+			color: inherit;
+		}
+		.bar > .feed {
+			flex-basis: 30%;
+			display: flex;
+			flex-direction: row;
+		}
+		.bar > .feed input {
+			width: 100%;
 		}
 
 		.inspector {
 			margin: 1em;
 		}
-
 		.inspector table {
 			table-layout: fixed;
 			border-collapse: collapse;
