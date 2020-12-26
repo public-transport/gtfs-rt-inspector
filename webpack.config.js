@@ -1,5 +1,6 @@
 'use strict'
 
+const webpack = require('webpack')
 const HtmlPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const path = require('path')
@@ -19,12 +20,20 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [
 				{from: 'assets'},
+				require.resolve('mapbox-gl/dist/mapbox-gl.css'),
 			],
 		}),
+		new webpack.EnvironmentPlugin([
+			'MAPBOX_TOKEN',
+		]),
 	],
 	module: {
 		rules: [{
 			test: /\.jsx?$/,
+			exclude: [
+				// https://github.com/mapbox/mapbox-gl-js/issues/3422
+				/\bmapbox-gl\b/,
+			],
 			loader: 'babel-loader',
 			options: {
 				presets: [

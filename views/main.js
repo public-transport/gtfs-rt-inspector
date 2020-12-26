@@ -1,10 +1,12 @@
 import {h} from 'preact'
 import Bar from './bar'
 import Inspector from './inspector'
+import _Map from './map'
 
 const mainView = ({state, emit}) => {
 	const View = ({
 		'inspector': Inspector,
+		'map': _Map,
 	})[state.view] || Inspector
 	return (
 		<div class="app">
