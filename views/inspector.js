@@ -1,38 +1,67 @@
 import {h} from 'preact'
+import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
 import ms from 'ms'
 
-const renderTripStartDate = (sD) => {
-	if ('string' !== typeof sD) return '?'
+const renderStartDate = (sD) => {
+	if ('string' !== typeof sD || !sD) return '?'
 	return <code><abbr title={sD}>{sD.slice(4, 6)}-{sD.slice(6, 8)}</abbr></code>
+}
+const renderStartTime = (sT) => {
+	if ('string' !== typeof sT || !sT) return '?'
+	return <code>{sT}</code>
 }
 const renderDelay = (delay) => {
 	if ('number' !== typeof delay) return '?'
 	return delay === 0 ? '0s' : ms(delay * 1000)
 }
+
+const {
+	SCHEDULED,
+	SKIPPED,
+	NO_DATA,
+} = TripUpdate.StopTimeUpdate.ScheduleRelationship
 const renderScheduleRelationship = (sR) => {
-	if (sR === 0) return <code><abbr title="SCHEDULED">SCHED</abbr></code>
-	if (sR === 1) return <code><abbr title="SKIPPED">SKIP</abbr></code>
-	if (sR === 2) return <code><abbr title="NO_DATA">NO_DATA</abbr></code>
+	if (sR === SCHEDULED) return <code><abbr title="SCHEDULED">SCHED</abbr></code>
+	if (sR === SKIPPED) return <code><abbr title="SKIPPED">SKIP</abbr></code>
+	if (sR === NO_DATA) return <code><abbr title="NO_DATA">NO_DATA</abbr></code>
 	return '?'
 }
+
+const {
+	INCOMING_AT,
+	STOPPED_AT,
+	IN_TRANSIT_TO,
+} = VehiclePosition.VehicleStopStatus
 const renderVehicleStopStatus = (vSS) => {
-	if (vSS === 0) return <code><abbr title="INCOMING_AT">INC_AT</abbr></code>
-	if (vSS === 1) return <code><abbr title="STOPPED_AT">STOP_AT</abbr></code>
-	if (vSS === 2) return <code><abbr title="IN_TRANSIT_TO">IN_TR_TO</abbr></code>
+	if (vSS === INCOMING_AT) return <code><abbr title="INCOMING_AT">INC_AT</abbr></code>
+	if (vSS === STOPPED_AT) return <code><abbr title="STOPPED_AT">STOP_AT</abbr></code>
+	if (vSS === IN_TRANSIT_TO) return <code><abbr title="IN_TRANSIT_TO">IN_TR_TO</abbr></code>
 	return '?'
 }
+
 const renderPosition = (pos) => {
 	if (!pos) return '?'
+	const title = [
+		'number' === typeof pos.latitude ? pos.latitude : '?',
+		'number' === typeof pos.longitude ? pos.longitude : '?',
+	].join(' | ')
 	const lat = 'number' === typeof pos.latitude
-		? <code>{pos.latitude.toFixed(5)}</code>
+		? <code>{pos.latitude.toFixed(3)}</code>
 		: '?'
 	const lon = 'number' === typeof pos.longitude
-		? <code>{pos.longitude.toFixed(5)}</code>
+		? <code>{pos.longitude.toFixed(3)}</code>
 		: '?'
 	// todo: pos.bearing, pos.odometer, pos.speed
 	// todo: don't wrap in a <div>
-	return (<div>{lat} | {lon}</div>)
+	return (<abbr title={title}>{lat} {lon}</abbr>)
 }
+
+const {
+	RUNNING_SMOOTHLY,
+	STOP_AND_GO,
+	CONGESTION,
+	SEVERE_CONGESTION,
+} = VehiclePosition.CongestionLevel
 const renderCongestionLevel = (gL) => {
 	if (gL === 1) return <code><abbr title="RUNNING_SMOOTHLY">SMOOTH</abbr></code>
 	if (gL === 2) return <code><abbr title="STOP_AND_GO">STOP_GO</abbr></code>
@@ -40,6 +69,16 @@ const renderCongestionLevel = (gL) => {
 	if (gL === 4) return <code><abbr title="SEVERE_CONGESTION">SEV_CONG</abbr></code>
 	return '?'
 }
+
+const {
+	EMPTY,
+	MANY_SEATS_AVAILABLE,
+	FEW_SEATS_AVAILABLE,
+	STANDING_ROOM_ONLY,
+	CRUSHED_STANDING_ROOM_ONLY,
+	FULL,
+	NOT_ACCEPTING_PASSENGERS,
+} = VehiclePosition.OccupancyStatus
 const renderOccupancyStatus = (oS) => {
 	if (oS === 0) return <code><abbr title="EMPTY">EMPTY</abbr></code>
 	if (oS === 1) return <code><abbr title="MANY_SEATS_AVAILABLE">MANY_SEATS</abbr></code>
@@ -57,13 +96,13 @@ const renderTripUpdate = (entity) => {
 	// todo: stop_time_update
 	// todo: timestamp
 	return (
-		<tr>
+		<tr id={'entity-' + entity.id}>
 			<td><code>{entity.id}</code></td>
 			<td><code>{t.route_id}</code></td>
 			<td><code>{t.direction_id}</code></td>
 			<td><code>{t.trip_id}</code></td>
-			<td>{renderTripStartDate(t.start_date)}</td>
-			<td><code>{t.start_time}</code></td>
+			<td>{renderStartDate(t.start_date)}</td>
+			<td>{renderStartTime(t.start_time)}</td>
 			<td>{renderScheduleRelationship(t.schedule_relationship)}</td>
 			<td><code>{v.id}</code></td>
 			<td><code>{v.label}</code></td>
@@ -96,7 +135,7 @@ const renderTripUpdates = (feed) => {
 						<th><code><abbr title="start_time">st_time</abbr></code></th>
 						<th><code>id</code></th>
 						<th><code>label</code></th>
-						<th><code>license_plate</code></th>
+						<th><abbr title="license_plate"><code>lic_pl</code></abbr></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -113,13 +152,13 @@ const renderVehiclePosition = (entity) => {
 	// todo: stop_time_update
 	// todo: timestamp
 	return (
-		<tr>
+		<tr id={'entity-' + entity.id}>
 			<td><code>{entity.id}</code></td>
 			<td><code>{t.route_id}</code></td>
 			<td><code>{t.direction_id}</code></td>
 			<td><code>{t.trip_id}</code></td>
-			<td>{renderTripStartDate(t.start_date)}</td>
-			<td><code>{t.start_time}</code></td>
+			<td>{renderStartDate(t.start_date)}</td>
+			<td>{renderStartTime(t.start_time)}</td>
 			<td><code>{v.id}</code></td>
 			<td><code>{v.label}</code></td>
 			<td><code>{v.license_plate}</code></td>
@@ -160,7 +199,7 @@ const renderVehiclePositions = (feed) => {
 						<th><code><abbr title="start_time">st_time</abbr></code></th>
 						<th><code>id</code></th>
 						<th><code>label</code></th>
-						<th><code>license_plate</code></th>
+						<th><abbr title="license_plate"><code>lic_plate</code></abbr></th>
 					</tr>
 				</thead>
 				<tbody>
