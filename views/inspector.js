@@ -1,6 +1,7 @@
 import {h} from 'preact'
 import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
 import ms from 'ms'
+import renderDelay from '../lib/render'
 
 const renderStartDate = (sD) => {
 	if ('string' !== typeof sD || !sD) return '?'
@@ -9,10 +10,6 @@ const renderStartDate = (sD) => {
 const renderStartTime = (sT) => {
 	if ('string' !== typeof sT || !sT) return '?'
 	return <code>{sT}</code>
-}
-const renderDelay = (delay) => {
-	if ('number' !== typeof delay) return '?'
-	return delay === 0 ? '0s' : ms(delay * 1000)
 }
 
 const {

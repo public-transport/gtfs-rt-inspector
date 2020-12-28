@@ -46,6 +46,7 @@ const feedStore = (state, bus) => {
 
 		state.feedRawData = buf
 		state.feedData = data
+		bus.emit('feed:data-change')
 		bus.emit(bus.STATE_CHANGE)
 	}
 
@@ -80,6 +81,7 @@ const feedStore = (state, bus) => {
 		state.feedSyncing = false
 		if (url !== null) resetSync()
 
+		bus.emit('feed:data-change')
 		bus.emit(bus.STATE_CHANGE)
 	})
 

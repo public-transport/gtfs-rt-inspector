@@ -16,6 +16,7 @@ const barView = ({state, emit}) => {
 	}
 	const nav = (
 		<ul class="nav">
+			{renderNavItem('log', state.view === 'log')}
 			{renderNavItem('inspector', state.view === 'inspector')}
 			{renderNavItem('map', state.view === 'map')}
 		</ul>

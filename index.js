@@ -5,6 +5,7 @@ import * as EventEmitter from 'events'
 import {render, h} from 'preact'
 import viewStore from './stores/view'
 import feedStore from './stores/feed'
+import feedLogStore from './stores/feed-log'
 import urlStore from './stores/url'
 import Main from './views/main'
 
@@ -16,6 +17,7 @@ const emit = bus.emit.bind(bus)
 
 viewStore(state, bus)
 feedStore(state, bus)
+feedLogStore(state, bus)
 urlStore(state, bus)
 setTimeout(emit, 0, bus.INITIAL_STATE)
 
