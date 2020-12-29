@@ -70,7 +70,7 @@ class MapView extends Component {
 				pos.vehicle.position.latitude,
 			])
 		}
-		this.map.fitBounds(bounds, {padding: 20})
+		this.map.fitBounds(bounds, {padding: 50})
 	}
 
 	componentDidMount() {

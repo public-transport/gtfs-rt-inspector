@@ -2,8 +2,6 @@
 
 **Web app to inspect & analyze any GTFS Realtime feed.**
 
-[![npm version](https://img.shields.io/npm/v/gtfs-rt-inspector.svg)](https://www.npmjs.com/package/gtfs-rt-inspector)
-![minimum Node.js version](https://img.shields.io/node/v/gtfs-rt-inspector.svg)
 [![support me via GitHub Sponsors](https://img.shields.io/badge/support%20me-donate-fa7664.svg)](https://github.com/sponsors/derhuerst)
 [![chat with me on Twitter](https://img.shields.io/badge/chat%20with%20me-on%20Twitter-1da1f2.svg)](https://twitter.com/derhuerst)
 

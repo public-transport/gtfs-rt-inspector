@@ -34,7 +34,7 @@ const feedLogStore = (state, bus) => {
 			const aDelay = 'number' === typeof a.delay ? a.delay : 0
 			const bDelay = 'number' === typeof b.delay ? b.delay : 0
 			return timeUntilA / 30 === timeUntilB / 30
-				? bDelay - aDelay
+				? Math.abs(bDelay) - Math.abs(aDelay)
 				: timeUntilA - timeUntilB
 		})
 

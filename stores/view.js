@@ -1,5 +1,5 @@
 const viewStore = (state, bus) => {
-	state.view = 'inspector'
+	state.view = 'log'
 
 	bus.on('view:set', (view) => {
 		if (view === state.view) return; // nothing changed, abort

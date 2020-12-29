@@ -1,7 +1,7 @@
 import {h} from 'preact'
 import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
 import ms from 'ms'
-import renderDelay from '../lib/render'
+import {renderDelay} from '../lib/render'
 
 const renderStartDate = (sD) => {
 	if ('string' !== typeof sD || !sD) return '?'
@@ -214,6 +214,8 @@ const inspectorView = ({state, emit}) => {
 			<p>The feed has no <code>FeedEntity</code>s.</p>
 		)
 	}
+
+	// todo: support alerts
 
 	return (
 		<div class="inspector">
