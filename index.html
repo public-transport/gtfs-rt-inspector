@@ -17,6 +17,70 @@
 			font-size: 105%;
 		}
 
+		table {
+			table-layout: fixed;
+			border-collapse: collapse;
+			text-align: left;
+		}
+		table th {
+			padding: .1em .2em;
+			vertical-align: bottom;
+			border: none;
+		}
+		table thead {
+			border-style: solid;
+			border-width: thin 0;
+			border-color: #333;
+		}
+		table tr:first-child th {
+			border-style: solid;
+			border-width: 0 thin 0 thin;
+			border-color: #333;
+		}
+		table tr:last-child th {
+			border-bottom-width: thin;
+		}
+		table th[colspan] {
+			text-align: center;
+		}
+		table td {
+			padding: .1em .15em;
+			border: solid thin #d0d0d0;
+		}
+		table tbody tr:first-child td {
+			border-top: none;
+		}
+		table tbody tr:nth-child(even) {
+			background-color: #fff;
+		}
+		table tbody tr:nth-child(odd) {
+			background-color: #f0f0f0;
+		}
+
+		code, pre {
+			/* https://www.client9.com/css-system-font-stack-monospace-v2/ */
+			font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+			font-size: 95%;
+			color: #111;
+		}
+		pre {
+			padding: .25em .3em;
+			background-color: #f8f8f8;
+			border: 1px solid #ddd;
+			border-radius: .15em;
+			font-size: 90%;
+			text-align: left;
+			line-height: 1.4;
+			overflow-x: scroll;
+		}
+		pre code {
+			padding: 0;
+			background-color: unset;
+			border: none;
+			border-radius: 0;
+			font-size: inherit;
+		}
+
 		.app {
 			display: flex;
 			flex-direction: column;
@@ -79,51 +143,22 @@
 		.inspector {
 			margin: 1em;
 		}
-		.inspector table {
-			table-layout: fixed;
-			border-collapse: collapse;
-			text-align: left;
-		}
-		.inspector table th {
-			padding: .1em .2em;
-			vertical-align: bottom;
-			border: none;
-		}
-		.inspector table thead {
-			border-style: solid;
-			border-width: thin 0;
-			border-color: #333;
-		}
-		.inspector table tr:first-child th {
-			border-style: solid;
-			border-width: 0 thin 0 thin;
-			border-color: #333;
-		}
-		.inspector table tr:last-child th {
-			border-bottom-width: thin;
-		}
-		.inspector table th[colspan] {
-			text-align: center;
-		}
-		.inspector table td {
-			padding: .1em .15em;
-			border: solid thin #d0d0d0;
-		}
-		.inspector table tbody tr:first-child td {
-			border-top: none;
-		}
-		.inspector table tbody tr:nth-child(even) {
-			background-color: #fff;
-		}
-		.inspector table tbody tr:nth-child(odd) {
-			background-color: #f0f0f0;
-		}
 		.inspector table tbody tr:target {
 			background-color: #f5e186;
 		}
 
 		.map {
 			flex: 1;
+		}
+
+		.log {
+			margin: 1em;
+		}
+		.log table tbody tr:target {
+			background-color: #f5e186;
+		}
+		.log table tbody td:last-child { /* delay */
+			text-align: right;
 		}
 	</style>
 </head>

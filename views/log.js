@@ -32,8 +32,12 @@ const renderFeedLogEntry = (entry) => {
 }
 
 const logView = ({state, emit}) => {
+	const totalEntries = state.feedLog.length
+	const feedLog = state.feedLog.slice(0, 1000)
+
 	return (
 		<div class="log">
+			<p>Showing {feedLog.length}{totalEntries > feedLog.length ? ' out of ' + totalEntries : null} <code>StopTimeUpdate</code>s.</p>
 			<table>
 				<thead>
 					<tr>
@@ -41,7 +45,7 @@ const logView = ({state, emit}) => {
 						<th rowspan="2"><abbr title="stop_time_update[].timestamp or feed timestamp"><code>t</code></abbr></th>
 						<th colspan="2"><code>trip</code></th>
 						<th colspan="3"><code>vehicle</code></th>
-						<th colspan="3"><code><abbr title="stop_time_update">s_t_u</abbr></code></th>
+						<th colspan="3"><code>stop_time_update</code></th>
 					</tr>
 					<tr>
 						<th><code>route_id</code></th>
@@ -55,7 +59,7 @@ const logView = ({state, emit}) => {
 					</tr>
 				</thead>
 				<tbody>
-					{state.feedLog.map(renderFeedLogEntry)}
+					{feedLog.map(renderFeedLogEntry)}
 				</tbody>
 			</table>
 		</div>
