@@ -12,14 +12,12 @@ import Main from './views/main'
 const state = {}
 const bus = new EventEmitter()
 bus.STATE_CHANGE = Symbol('state change')
-bus.INITIAL_STATE = Symbol('initial state set up')
 const emit = bus.emit.bind(bus)
 
 viewStore(state, bus)
 feedStore(state, bus)
 feedLogStore(state, bus)
 urlStore(state, bus)
-setTimeout(emit, 0, bus.INITIAL_STATE)
 
 const rerender = () => {
 	render(<Main state={state} emit={emit} />, document.body)

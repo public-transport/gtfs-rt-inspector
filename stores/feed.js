@@ -65,6 +65,7 @@ const feedStore = (state, bus) => {
 			// todo: handle errors properly
 			.catch(console.error)
 		})
+		if (state.feedSyncStopped) sync.stop()
 		// todo: error
 	}, 200)
 
@@ -92,19 +93,15 @@ const feedStore = (state, bus) => {
 		sync.refetch()
 	})
 	bus.on('feed:stop-sync', () => {
-		if (!sync || !sync.isActive()) return;
-		sync.stop()
 		state.feedSyncStopped = true
+		if (sync && sync.isActive()) sync.stop()
 		bus.emit(bus.STATE_CHANGE)
 	})
 	bus.on('feed:start-sync', () => {
-		if (!sync || sync.isActive()) return;
-		sync.start()
 		state.feedSyncStopped = false
+		if (sync && !sync.isActive()) sync.start()
 		bus.emit(bus.STATE_CHANGE)
 	})
-
-	// todo: listen on bus.STATE_CHANGE
 }
 
 export default feedStore
