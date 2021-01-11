@@ -14,6 +14,7 @@
 	"homepage": "https://github.com/derhuerst/gtfs-rt-inspector",
 	"repository": "derhuerst/gtfs-rt-inspector",
 	"bugs": "https://github.com/derhuerst/gtfs-rt-inspector/issues",
+	"license": "ISC",
 	"engines": {
 		"node": ">=14"
 	},
