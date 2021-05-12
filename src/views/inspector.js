@@ -1,7 +1,5 @@
-import {h} from 'preact'
-import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
-import ms from 'ms'
-import {renderDelay} from '../lib/render'
+import { transit_realtime as rt } from 'gtfs-realtime-bindings'
+import {humanDelay} from '../lib/time'
 
 const renderStartDate = (sD) => {
 	if ('string' !== typeof sD || !sD) return '?'
@@ -16,7 +14,7 @@ const {
 	SCHEDULED,
 	SKIPPED,
 	NO_DATA,
-} = TripUpdate.StopTimeUpdate.ScheduleRelationship
+} = rt.TripUpdate.StopTimeUpdate.ScheduleRelationship
 const renderScheduleRelationship = (sR) => {
 	if (sR === SCHEDULED) return <code><abbr title="SCHEDULED">SCHED</abbr></code>
 	if (sR === SKIPPED) return <code><abbr title="SKIPPED">SKIP</abbr></code>
@@ -28,7 +26,7 @@ const {
 	INCOMING_AT,
 	STOPPED_AT,
 	IN_TRANSIT_TO,
-} = VehiclePosition.VehicleStopStatus
+} = rt.VehiclePosition.VehicleStopStatus
 const renderVehicleStopStatus = (vSS) => {
 	if (vSS === INCOMING_AT) return <code><abbr title="INCOMING_AT">INC_AT</abbr></code>
 	if (vSS === STOPPED_AT) return <code><abbr title="STOPPED_AT">STOP_AT</abbr></code>
@@ -58,12 +56,12 @@ const {
 	STOP_AND_GO,
 	CONGESTION,
 	SEVERE_CONGESTION,
-} = VehiclePosition.CongestionLevel
+} = rt.VehiclePosition.CongestionLevel
 const renderCongestionLevel = (gL) => {
-	if (gL === 1) return <code><abbr title="RUNNING_SMOOTHLY">SMOOTH</abbr></code>
-	if (gL === 2) return <code><abbr title="STOP_AND_GO">STOP_GO</abbr></code>
-	if (gL === 3) return <code><abbr title="CONGESTION">CONG</abbr></code>
-	if (gL === 4) return <code><abbr title="SEVERE_CONGESTION">SEV_CONG</abbr></code>
+	if (gL === RUNNING_SMOOTHLY) return <code><abbr title="RUNNING_SMOOTHLY">SMOOTH</abbr></code>
+	if (gL === STOP_AND_GO) return <code><abbr title="STOP_AND_GO">STOP_GO</abbr></code>
+	if (gL === CONGESTION) return <code><abbr title="CONGESTION">CONG</abbr></code>
+	if (gL === SEVERE_CONGESTION) return <code><abbr title="SEVERE_CONGESTION">SEV_CONG</abbr></code>
 	return '?'
 }
 
@@ -75,42 +73,42 @@ const {
 	CRUSHED_STANDING_ROOM_ONLY,
 	FULL,
 	NOT_ACCEPTING_PASSENGERS,
-} = VehiclePosition.OccupancyStatus
+} = rt.VehiclePosition.OccupancyStatus
 const renderOccupancyStatus = (oS) => {
-	if (oS === 0) return <code><abbr title="EMPTY">EMPTY</abbr></code>
-	if (oS === 1) return <code><abbr title="MANY_SEATS_AVAILABLE">MANY_SEATS</abbr></code>
-	if (oS === 2) return <code><abbr title="FEW_SEATS_AVAILABLE">FEW_SEATS</abbr></code>
-	if (oS === 3) return <code><abbr title="STANDING_ROOM_ONLY">STANDING</abbr></code>
-	if (oS === 4) return <code><abbr title="CRUSHED_STANDING_ROOM_ONLY">CRUSHED</abbr></code>
-	if (oS === 5) return <code><abbr title="FULL">FULL</abbr></code>
-	if (oS === 6) return <code><abbr title="NOT_ACCEPTING_PASSENGERS">NOT_ACCEPT</abbr></code>
+	if (oS === EMPTY) return <code><abbr title="EMPTY">EMPTY</abbr></code>
+	if (oS === MANY_SEATS_AVAILABLE) return <code><abbr title="MANY_SEATS_AVAILABLE">MANY_SEATS</abbr></code>
+	if (oS === FEW_SEATS_AVAILABLE) return <code><abbr title="FEW_SEATS_AVAILABLE">FEW_SEATS</abbr></code>
+	if (oS === STANDING_ROOM_ONLY) return <code><abbr title="STANDING_ROOM_ONLY">STANDING</abbr></code>
+	if (oS === CRUSHED_STANDING_ROOM_ONLY) return <code><abbr title="CRUSHED_STANDING_ROOM_ONLY">CRUSHED</abbr></code>
+	if (oS === FULL) return <code><abbr title="FULL">FULL</abbr></code>
+	if (oS === NOT_ACCEPTING_PASSENGERS) return <code><abbr title="NOT_ACCEPTING_PASSENGERS">NOT_ACCEPT</abbr></code>
 	return '?'
 }
 
 const renderTripUpdate = (entity) => {
-	const t = entity.trip_update.trip || {}
-	const v = entity.trip_update.vehicle || {}
+	const t = entity.tripUpdate.trip || {}
+	const v = entity.tripUpdate.vehicle || {}
 	// todo: stop_time_update
 	// todo: timestamp
 	return (
 		<tr id={'entity-' + entity.id}>
 			<td><code>{entity.id}</code></td>
-			<td><code>{t.route_id}</code></td>
-			<td><code>{t.direction_id}</code></td>
-			<td><code>{t.trip_id}</code></td>
-			<td>{renderStartDate(t.start_date)}</td>
-			<td>{renderStartTime(t.start_time)}</td>
-			<td>{renderScheduleRelationship(t.schedule_relationship)}</td>
+			<td><code>{t.routeId}</code></td>
+			<td><code>{t.directionId}</code></td>
+			<td><code>{t.tripId}</code></td>
+			<td>{renderStartDate(t.startDate)}</td>
+			<td>{renderStartTime(t.startTime)}</td>
+			<td>{renderScheduleRelationship(t.scheduleRelationship)}</td>
 			<td><code>{v.id}</code></td>
 			<td><code>{v.label}</code></td>
-			<td><code>{v.license_plate}</code></td>
-			<td>{renderDelay(entity.trip_update.delay)}</td>
+			<td><code>{v.licensePlate}</code></td>
+			<td>{humanDelay(entity.tripUpdate.delay)}</td>
 		</tr>
 	)
 }
-const renderTripUpdates = (feed) => {
+const TripUpdates = ({feed}) => {
 	const tripUpdates = feed.entity
-	.filter(entity => !!entity.trip_update)
+	.filter(entity => !!entity.tripUpdate)
 
 	return (
 		<div>
@@ -118,21 +116,21 @@ const renderTripUpdates = (feed) => {
 			<table class="trip-updates">
 				<thead>
 					<tr>
-						<th rowspan="2"><code><abbr title="entity_id">e_id</abbr></code></th>
+						<th rowspan="2"><code><abbr title="entityId">e_id</abbr></code></th>
 						<th colspan="5"><code>trip</code></th>
-						<th rowspan="2"><code><abbr title="schedule_relationship">s_rel</abbr></code></th>
+						<th rowspan="2"><code><abbr title="scheduleRelationship">s_rel</abbr></code></th>
 						<th colspan="3"><code>vehicle</code></th>
 						<th rowspan="2"><code>delay</code></th>
 					</tr>
 					<tr>
-						<th><code>route_id</code></th>
-						<th><code><abbr title="direction_id">dir_id</abbr></code></th>
-						<th><code>trip_id</code></th>
-						<th><code><abbr title="start_date">st_date</abbr></code></th>
-						<th><code><abbr title="start_time">st_time</abbr></code></th>
+						<th><code>routeId</code></th>
+						<th><code><abbr title="directionId">dir_id</abbr></code></th>
+						<th><code>tripId</code></th>
+						<th><code><abbr title="startDate">st_date</abbr></code></th>
+						<th><code><abbr title="startTime">st_time</abbr></code></th>
 						<th><code>id</code></th>
 						<th><code>label</code></th>
-						<th><abbr title="license_plate"><code>lic_pl</code></abbr></th>
+						<th><abbr title="licensePlate"><code>lic_pl</code></abbr></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -151,24 +149,24 @@ const renderVehiclePosition = (entity) => {
 	return (
 		<tr id={'entity-' + entity.id}>
 			<td><code>{entity.id}</code></td>
-			<td><code>{t.route_id}</code></td>
-			<td><code>{t.direction_id}</code></td>
-			<td><code>{t.trip_id}</code></td>
-			<td>{renderStartDate(t.start_date)}</td>
-			<td>{renderStartTime(t.start_time)}</td>
+			<td><code>{t.routeId}</code></td>
+			<td><code>{t.directionId}</code></td>
+			<td><code>{t.tripId}</code></td>
+			<td>{renderStartDate(t.startDate)}</td>
+			<td>{renderStartTime(t.startTime)}</td>
 			<td><code>{v.id}</code></td>
 			<td><code>{v.label}</code></td>
-			<td><code>{v.license_plate}</code></td>
-			<td><code>{entity.vehicle.current_stop_sequence}</code></td>
-			<td><code>{entity.vehicle.stop_id}</code></td>
-			<td>{renderVehicleStopStatus(entity.vehicle.current_status)}</td>
+			<td><code>{v.licensePlate}</code></td>
+			<td><code>{entity.vehicle.currentStopSequence}</code></td>
+			<td><code>{entity.vehicle.stopId}</code></td>
+			<td>{renderVehicleStopStatus(entity.vehicle.currentStatus)}</td>
 			<td>{renderPosition(entity.vehicle.position)}</td>
-			<td>{renderCongestionLevel(entity.vehicle.congestion_level)}</td>
-			<td>{renderOccupancyStatus(entity.vehicle.occupancy_status)}</td>
+			<td>{renderCongestionLevel(entity.vehicle.congestionLevel)}</td>
+			<td>{renderOccupancyStatus(entity.vehicle.occupancyStatus)}</td>
 		</tr>
 	)
 }
-const renderVehiclePositions = (feed) => {
+const VehiclePositions = ({feed}) => {
 	const vehiclePositions = feed.entity
 	.filter(entity => !!entity.vehicle)
 
@@ -181,22 +179,22 @@ const renderVehiclePositions = (feed) => {
 						<th rowspan="2"><code><abbr title="entity_id">e_id</abbr></code></th>
 						<th colspan="5"><code>trip</code></th>
 						<th colspan="3"><code>vehicle</code></th>
-						<th rowspan="2"><code><abbr title="current_stop_sequence">st_seq</abbr></code></th>
-						<th rowspan="2"><code>stop_id</code></th>
-						<th rowspan="2"><code><abbr title="current_status">status</abbr></code></th>
+						<th rowspan="2"><code><abbr title="currentStopSequence">st_seq</abbr></code></th>
+						<th rowspan="2"><code>stopId</code></th>
+						<th rowspan="2"><code><abbr title="currentStatus">status</abbr></code></th>
 						<th rowspan="2"><code>position</code></th>
-						<th rowspan="2"><code><abbr title="congestion_level">cong_lvl</abbr></code></th>
-						<th rowspan="2"><code><abbr title="occupancy_status">occu</abbr></code></th>
+						<th rowspan="2"><code><abbr title="congestionLevel">cong_lvl</abbr></code></th>
+						<th rowspan="2"><code><abbr title="occupancyStatus">occu</abbr></code></th>
 					</tr>
 					<tr>
-						<th><code>route_id</code></th>
-						<th><code><abbr title="direction_id">dir_id</abbr></code></th>
-						<th><code>trip_id</code></th>
-						<th><code><abbr title="start_date">st_date</abbr></code></th>
-						<th><code><abbr title="start_time">st_time</abbr></code></th>
+						<th><code>routeId</code></th>
+						<th><code><abbr title="directionId">dir_id</abbr></code></th>
+						<th><code>tripId</code></th>
+						<th><code><abbr title="startDate">st_date</abbr></code></th>
+						<th><code><abbr title="startTime">st_time</abbr></code></th>
 						<th><code>id</code></th>
 						<th><code>label</code></th>
-						<th><abbr title="license_plate"><code>lic_plate</code></abbr></th>
+						<th><abbr title="licensePlate"><code>lic_plate</code></abbr></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -207,7 +205,7 @@ const renderVehiclePositions = (feed) => {
 	)
 }
 
-const inspectorView = ({state, emit}) => {
+export const Inspector = ({state}) => {
 	const feed = state.feedData
 	if (!Array.isArray(feed.entity) || feed.entity.length === 0) {
 		return (
@@ -219,10 +217,8 @@ const inspectorView = ({state, emit}) => {
 
 	return (
 		<div class="inspector">
-			{renderTripUpdates(feed)}
-			{renderVehiclePositions(feed)}
+			<TripUpdates feed={feed}/>
+			<VehiclePositions feed={feed}/>
 		</div>
 	)
 }
-
-export default inspectorView

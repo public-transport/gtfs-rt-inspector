@@ -1,4 +1,4 @@
-const viewStore = (state, bus) => {
+export const viewStore = (state, bus) => {
 	state.view = 'log'
 
 	bus.on('view:set', (view) => {
@@ -7,5 +7,3 @@ const viewStore = (state, bus) => {
 		bus.emit(bus.STATE_CHANGE)
 	})
 }
-
-export default viewStore

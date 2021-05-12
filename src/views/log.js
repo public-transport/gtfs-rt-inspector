@@ -1,5 +1,4 @@
-import {h} from 'preact'
-import {renderDelay} from '../lib/render'
+import {humanDelay} from '../lib/time'
 
 const renderTimestamp = (t) => {
 	// todo: correct tz
@@ -7,7 +6,7 @@ const renderTimestamp = (t) => {
 	return new Date(t * 1000).toISOString()
 }
 
-const renderFeedLogEntry = (entry) => {
+const FeedLogEntry = ({entry}) => {
 	const {
 		entityId, timestamp,
 		routeId, directionId, tripId,
@@ -26,12 +25,12 @@ const renderFeedLogEntry = (entry) => {
 			<td><code>{vehicleLabel}</code></td>
 			<td><code>{stopId}</code></td>
 			<td>{renderTimestamp(tArrival)}</td>
-			<td>{renderDelay(delay)}</td>
+			<td>{humanDelay(delay)}</td>
 		</tr>
 	)
 }
 
-const logView = ({state, emit}) => {
+export const Log = ({state, emit}) => {
 	const totalEntries = state.feedLog.length
 	const feedLog = state.feedLog.slice(0, 1000)
 
@@ -59,11 +58,11 @@ const logView = ({state, emit}) => {
 					</tr>
 				</thead>
 				<tbody>
-					{feedLog.map(renderFeedLogEntry)}
+					{feedLog.map(entry => (
+						<FeedLogEntry entry={entry}/>
+					))}
 				</tbody>
 			</table>
 		</div>
 	)
 }
-
-export default logView
