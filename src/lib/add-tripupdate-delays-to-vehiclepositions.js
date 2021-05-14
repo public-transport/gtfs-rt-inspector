@@ -1,24 +1,22 @@
-const get = require('lodash/get')
-
-const addTripUpdateDelaysToVehiclePositions = (feedData) => {
+export const addTripUpdateDelaysToVehiclePositions = (feedData) => {
 	for (const entity of feedData.entity) {
 		// only work with reasonably explicit VehiclePositions
 		const {trip, vehicle} = entity.vehicle || {}
-		if (!trip || !trip.trip_id || !vehicle) continue
+		if (!trip || !trip.tripId || !vehicle) continue
 
-		const tripIdA = trip.trip_id
-		const tripStartDateA = trip.start_date
-		const tripStartTimeA = trip.start_time
+		const tripIdA = trip.tripId
+		const tripStartDateA = trip.startDate
+		const tripStartTimeA = trip.startTime
 		const vehicleIdA = vehicle.id
 
 		for (const entity of feedData.entity) {
 			// only work with reasonably explicit TripUpdates
-			const {trip, vehicle, delay} = entity.trip_update || {}
-			if (!trip || !trip.trip_id || !vehicle) continue
+			const {trip, vehicle, delay} = entity.tripUpdate || {}
+			if (!trip || !trip.tripId || !vehicle) continue
 
-			const tripIdB = trip.trip_id
-			const tripStartDateB = trip.start_date
-			const tripStartTimeB = trip.start_time
+			const tripIdB = trip.tripId
+			const tripStartDateB = trip.startDate
+			const tripStartTimeB = trip.startTime
 			const vehicleIdB = vehicle.id
 
 			if (tripIdA !== tripIdB) continue
@@ -47,5 +45,3 @@ const addTripUpdateDelaysToVehiclePositions = (feedData) => {
 		}
 	}
 }
-
-module.exports = addTripUpdateDelaysToVehiclePositions

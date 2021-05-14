@@ -1,58 +1,55 @@
 'use strict'
 
-const webpack = require('webpack')
-const HtmlPlugin = require('html-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
 const path = require('path')
+
+const HtmlPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
 const pkg = require('./package.json')
 
 module.exports = {
-	entry: './index.js',
+	entry: './src/index.js',
 	output: {
 		filename: 'main.js',
 	},
 	plugins: [
 		new HtmlPlugin({
 			title: pkg.title,
-			template: 'index.html',
+			template: 'src/index.html',
 			favicon: 'assets/icon.png',
 		}),
-		new CopyPlugin({
-			patterns: [
-				{from: 'assets'},
-				require.resolve('mapbox-gl/dist/mapbox-gl.css'),
-			],
-		}),
-		new webpack.EnvironmentPlugin([
-			'MAPBOX_TOKEN',
-		]),
+		new MiniCssExtractPlugin(),
 	],
 	module: {
-		rules: [{
-			test: /\.jsx?$/,
-			exclude: [
-				// https://github.com/mapbox/mapbox-gl-js/issues/3422
-				/\bmapbox-gl\b/,
-			],
-			loader: 'babel-loader',
-			options: {
-				presets: [
-					['@babel/preset-env', {
-						useBuiltIns: 'entry',
-						corejs: 3,
-					}],
-				],
-				plugins: [
-					['@babel/plugin-transform-react-jsx', {
-						pragma: 'h',
-						pragmaFrag: 'Fragment',
-						// runtime: 'automatic',
-						// importSource: 'preact/h',
-						useSpread: true,
-					}],
-				],
+		rules: [
+			{
+				test: /\.jsx?$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader',
+				options: {
+					presets: [
+						['@babel/preset-env', {
+							targets:{
+								esmodules:true
+							},
+							bugfixes:true,
+							loose: true,
+						}],
+					],
+					plugins: [
+						['@babel/plugin-transform-react-jsx', {
+							runtime: 'automatic',
+							importSource: 'preact',
+							useSpread: true,
+						}],
+					],
+				},
 			},
-		}]
+			{
+				test: /\.css$/i,
+				use: [MiniCssExtractPlugin.loader, 'css-loader'],
+			},
+		],
 	},
 	devServer: {
 		port: 8000, // todo: remove

@@ -1,7 +1,6 @@
-import {h} from 'preact'
-import {homepage} from '../package.json'
+import pkg from '../../package.json'
 
-const barView = ({state, emit}) => {
+export const Bar = ({state, emit}) => {
 	const renderNavItem = (name, isActive) => {
 		const handleClick = (ev) => {
 			if (ev.metaKey || ev.ctrlKey) return;
@@ -20,7 +19,7 @@ const barView = ({state, emit}) => {
 			{renderNavItem('log', state.view === 'log')}
 			{renderNavItem('inspector', state.view === 'inspector')}
 			{renderNavItem('map', state.view === 'map')}
-			<li><a href={homepage} target="_parent" title={name + ' homepage'}>?</a></li>
+			<li><a href={pkg.homepage} target="_parent" title={name + ' homepage'}>?</a></li>
 		</ul>
 	)
 
@@ -50,5 +49,3 @@ const barView = ({state, emit}) => {
 		</div>
 	)
 }
-
-export default barView

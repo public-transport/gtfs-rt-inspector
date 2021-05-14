@@ -1,4 +1,4 @@
-const feedLogStore = (state, bus) => {
+export const feedLogStore = (state, bus) => {
 	state.feedLog = []
 
 	bus.on('feed:data-change', () => {
@@ -11,17 +11,17 @@ const feedLogStore = (state, bus) => {
 		const header = state.feedData.header || {}
 		const upcomingArrivals = (state.feedData.entity || [])
 		// keep only FeedEntitys with a TripUpdate
-		.filter(e => !!e.trip_update)
+		.filter(e => !!e.tripUpdate)
 		// flatMap to one handy object for each StopTimeUpdate
-		.flatMap(tu => (tu.trip_update.stop_time_update || []).map(stu => ({
+		.flatMap(tu => (tu.tripUpdate.stopTimeUpdate || []).map(stu => ({
 			entityId: tu.id,
-			timestamp: tu.trip_update.timestamp || header.timestamp || null,
-			routeId: tu.trip_update.trip.route_id,
-			directionId: tu.trip_update.trip.direction_id,
-			tripId: tu.trip_update.trip.trip_id,
-			vehicleId: tu.trip_update.vehicle.id,
-			vehicleLabel: tu.trip_update.vehicle.label,
-			stopId: stu.stop_id,
+			timestamp: tu.tripUpdate.timestamp || header.timestamp || null,
+			routeId: tu.tripUpdate.trip.routeId,
+			directionId: tu.tripUpdate.trip.directionId,
+			tripId: tu.tripUpdate.trip.tripId,
+			vehicleId: tu.tripUpdate.vehicle.id,
+			vehicleLabel: tu.tripUpdate.vehicle.label,
+			stopId: stu.stopId,
 			tArrival: stu.arrival.time,
 			delay: stu.arrival.delay,
 		})))
@@ -44,5 +44,3 @@ const feedLogStore = (state, bus) => {
 		state.feedLog = upcomingArrivals
 	})
 }
-
-export default feedLogStore

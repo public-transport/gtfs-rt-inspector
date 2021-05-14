@@ -1,8 +1,7 @@
-import debounce from 'lodash/debounce'
-import {parse as parseContentType} from 'content-type'
-const {Buffer} = require('buffer/') // trailing slash is intentional
-const {FeedMessage} = require('gtfs-rt-bindings')
-import * as syncViaPeriodicFetch from 'fetch-periodic-sync'
+import debounce from 'lodash-es/debounce'
+import ct from 'content-type'
+import { transit_realtime as rt } from 'gtfs-realtime-bindings'
+import syncViaPeriodicFetch from 'fetch-periodic-sync'
 
 const MAX_FEED_SIZE = 5 * 1024 * 1024 // 5mb
 
@@ -11,7 +10,7 @@ const CONTENT_TYPES = [
 	'application/grtfeed', // used by TriMet
 ]
 
-const feedStore = (state, bus) => {
+export const feedStore = (state, bus) => {
 	state.feedUrl = null
 	state.feedSyncStopped = false
 	state.feedSyncing = false
@@ -21,7 +20,7 @@ const feedStore = (state, bus) => {
 
 	const receiveAndParseFeed = async (res) => {
 		const cTypeHeader = res.headers.get('content-type')
-		const cType = cTypeHeader ? parseContentType(cTypeHeader) : {}
+		const cType = cTypeHeader ? ct.parse(cTypeHeader) : {}
 		if (cType.type && !CONTENT_TYPES.includes(cType.type)) {
 			const err = new Error(`invalid content-type \`${cType.type}\`, only ${CONTENT_TYPES.join(', ')} are supported`)
 			err.response = res
@@ -35,8 +34,16 @@ const feedStore = (state, bus) => {
 			throw err
 		}
 
-		const buf = Buffer.from(await res.arrayBuffer())
-		const data = FeedMessage.decode(buf)
+		const buf = await res.arrayBuffer()
+		const proto = rt.FeedMessage.decode(new Uint8Array(buf))
+		const data = rt.FeedMessage.toObject(proto, {
+			arrays: true,
+			longs: String,
+			enums: String,
+			bytes: String,
+			json: true
+		})
+
 		if (!data || !data.header || !Array.isArray(data.entity)) {
 			const err = new Error(`couldn't parse feed`)
 			err.rawFeed = buf
@@ -103,5 +110,3 @@ const feedStore = (state, bus) => {
 		bus.emit(bus.STATE_CHANGE)
 	})
 }
-
-export default feedStore
