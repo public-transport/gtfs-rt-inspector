@@ -51,6 +51,9 @@ module.exports = {
 						useSpread: true,
 					}],
 				],
+				ignore: [
+					'./node_modules/mapbox-gl/dist/mapbox-gl.js',
+				],
 			},
 		}]
 	},
