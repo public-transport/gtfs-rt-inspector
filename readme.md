@@ -1,8 +1,8 @@
 # gtfs-rt-inspector
 
-**Web app to inspect & analyze any GTFS Realtime feed.**
+**Web app to inspect & analyze any [CORS-enabled](https://enable-cors.org) [GTFS Realtime (GTFS-RT)](https://gtfs.org/reference/realtime/v2/) feed.**
 
-It is deployed at [`derhuerst.github.io/gtfs-rt-inspector/`](https://derhuerst.github.io/gtfs-rt-inspector/).
+It is deployed at [`public-transport.github.io/gtfs-rt-inspector/`](https://public-transport.github.io/gtfs-rt-inspector/).
 
 [![support me via GitHub Sponsors](https://img.shields.io/badge/support%20me-donate-fa7664.svg)](https://github.com/sponsors/derhuerst)
 [![chat with me on Twitter](https://img.shields.io/badge/chat%20with%20me-on%20Twitter-1da1f2.svg)](https://twitter.com/derhuerst)
