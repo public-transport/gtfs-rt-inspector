@@ -26,7 +26,7 @@
 	"dependencies": {
 		"buffer": "^6.0.3",
 		"content-type": "^1.0.4",
-		"core-js": "^3.16.4",
+		"core-js": "^3.17.1",
 		"events": "^3.2.0",
 		"fetch-periodic-sync": "^1.1.2",
 		"gtfs-rt-bindings": "^3.1.0",
