@@ -67,7 +67,7 @@ const feedStore = (state, bus) => {
 		})
 		if (state.feedSyncStopped) sync.stop()
 		// todo: error
-	}, 200)
+	}, 300)
 
 	bus.on('feed:set-url', (url) => {
 		if (url === state.feedUrl) return; // nothing changed, abort
@@ -94,12 +94,12 @@ const feedStore = (state, bus) => {
 	})
 	bus.on('feed:stop-sync', () => {
 		state.feedSyncStopped = true
-		if (sync && sync.isActive()) sync.stop()
+		if (sync) sync.stop()
 		bus.emit(bus.STATE_CHANGE)
 	})
 	bus.on('feed:start-sync', () => {
 		state.feedSyncStopped = false
-		if (sync && !sync.isActive()) sync.start()
+		if (sync) sync.start()
 		bus.emit(bus.STATE_CHANGE)
 	})
 }
