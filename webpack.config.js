@@ -59,6 +59,8 @@ module.exports = {
 	},
 	devServer: {
 		port: 8000, // todo: remove
-		contentBase: path.join(__dirname, 'dist'),
+		static: {
+			directory: path.join(__dirname, 'dist'),
+		},
 	},
 }
