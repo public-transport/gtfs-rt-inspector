@@ -3,6 +3,7 @@ import Bar from './bar'
 import Log from './log'
 import Inspector from './inspector'
 import _Map from './map'
+import Error from './error'
 
 const mainView = ({state, emit}) => {
 	const View = ({
@@ -16,7 +17,11 @@ const mainView = ({state, emit}) => {
 			<div class="view">
 				{state.feedData ? (
 					<View state={state} emit={emit} />
-				): null}
+				) : (
+					state.feedError ? (
+						<Error state={state} emit={emit} />
+					) : null
+				)}
 			</div>
 		</div>
 	)

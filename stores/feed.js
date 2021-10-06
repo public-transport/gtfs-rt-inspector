@@ -15,6 +15,7 @@ const feedStore = (state, bus) => {
 	state.feedUrl = null
 	state.feedSyncStopped = false
 	state.feedSyncing = false
+	state.feedError = null
 	state.feedRawData = null
 	state.feedData = null
 	let sync = null
@@ -44,6 +45,7 @@ const feedStore = (state, bus) => {
 			throw err
 		}
 
+		state.feedError = null
 		state.feedRawData = buf
 		state.feedData = data
 		bus.emit('feed:data-change')
@@ -62,11 +64,16 @@ const feedStore = (state, bus) => {
 		sync.on('fetch-done', () => setSyncing(false))
 		sync.on('change', (res) => {
 			receiveAndParseFeed(res)
-			// todo: handle errors properly
-			.catch(console.error)
+			.catch((err) => {
+				state.feedError = err
+				bus.emit(bus.STATE_CHANGE)
+			})
+		})
+		sync.on('error', (err) => {
+			state.feedError = err
+			bus.emit(bus.STATE_CHANGE)
 		})
 		if (state.feedSyncStopped) sync.stop()
-		// todo: error
 	}, 300)
 
 	bus.on('feed:set-url', (url) => {

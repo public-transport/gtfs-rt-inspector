@@ -33,6 +33,7 @@
 		"lodash": "^4.17.20",
 		"mapbox-gl": "^2.1.1",
 		"ms": "^2.1.3",
+		"object-inspect": "^1.11.0",
 		"preact": "^10.5.7",
 		"query-string": "^7.0.1",
 		"regenerator-runtime": "^0.13.7"
