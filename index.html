@@ -133,6 +133,18 @@
 		.bar > .feed input {
 			width: 100%;
 		}
+		@keyframes spinning {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+		.bar > .feed > .sync.syncing span {
+			display: inline-block;
+			animation: spinning .8s linear infinite;
+		}
 
 		.inspector {
 			margin: 1em;
@@ -156,4 +168,13 @@
 		}
 		.log table tbody td:last-child { /* delay */
 			text-align: right;
+		}
+
+		.error {
+			flex-grow: 1;
+			margin: 1em;
+			padding: 0 1em;
+			border: .1em solid #c0392b;
+			border-radius: .2em;
+			background-color: #FFC6BF;
 		}</style><link rel="icon" href="icon.png"><script defer="defer" src="main.js"></script></head><body><noscript><p>Please enable JavaScript to run gtfs-rt-inspector.</p></noscript></body></html>
