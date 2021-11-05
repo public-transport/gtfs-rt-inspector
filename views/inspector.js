@@ -114,7 +114,7 @@ const renderTripUpdates = (feed) => {
 
 	return (
 		<div>
-			<h2><code>TripUpdate</code>s</h2>
+			<h2><code>TripUpdate</code>s ({tripUpdates.length})</h2>
 			<table class="trip-updates">
 				<thead>
 					<tr>
@@ -174,7 +174,7 @@ const renderVehiclePositions = (feed) => {
 
 	return (
 		<div>
-			<h2><code>VehiclePosition</code>s</h2>
+			<h2><code>VehiclePosition</code>s ({vehiclePositions.length})</h2>
 			<table class="vehicle-positions">
 				<thead>
 					<tr>
