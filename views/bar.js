@@ -34,9 +34,21 @@ const barView = ({state, emit}) => {
 		if (state.feedSyncStopped) emit('feed:start-sync')
 		else emit('feed:stop-sync')
 	}
+	const handleSyncIntervalChange = (ev) => {
+		const val = parseInt(ev.target.value)
+		emit('feed:set-sync-interval', val)
+	}
 	const feed = (
 		<div class="feed">
 			<input onInput={handleFeedUrlInput} value={state.feedUrl} />
+			<input
+				class="interval"
+				type="number"
+				min="1"
+				step="10"
+				onChange={handleSyncIntervalChange}
+				value={state.feedSyncInterval}
+			/>
 			<button
 				class={state.feedSyncing ? 'sync syncing' : 'sync'}
 				onClick={handleSyncClick}

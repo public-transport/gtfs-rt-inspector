@@ -7,6 +7,7 @@ const qsParse = memoize(_qsParse)
 
 const decodeString = str => str
 const decodeBoolean = str => str === 'true'
+const decodeInteger = str => parseInt(str)
 const PERSISTED_STATE_FIELDS = {
 	// stores/feed
 	'feedUrl': {
@@ -17,6 +18,12 @@ const PERSISTED_STATE_FIELDS = {
 		decode: decodeBoolean,
 		apply: (stopped, bus) => {
 			bus.emit(`feed:${stopped ? 'stop' : 'start'}-sync`)
+		},
+	},
+	'feedSyncInterval': {
+		decode: decodeInteger,
+		apply: (interval, bus) => {
+			bus.emit('feed:set-sync-interval', interval)
 		},
 	},
 	// stores/view

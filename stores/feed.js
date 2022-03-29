@@ -14,6 +14,7 @@ const CONTENT_TYPES = [
 const feedStore = (state, bus) => {
 	state.feedUrl = null
 	state.feedSyncStopped = false
+	state.feedSyncInterval = 30 // 30s
 	state.feedSyncing = false
 	state.feedError = null
 	state.feedRawData = null
@@ -58,7 +59,7 @@ const feedStore = (state, bus) => {
 	}
 	const resetSync = debounce(() => {
 		sync = syncViaPeriodicFetch(state.feedUrl, {
-			interval: 30 * 1000, // 30s
+			interval: state.feedSyncInterval * 1000,
 		})
 		sync.on('fetch', () => setSyncing(true))
 		sync.on('fetch-done', () => setSyncing(false))
@@ -107,6 +108,23 @@ const feedStore = (state, bus) => {
 	bus.on('feed:start-sync', () => {
 		state.feedSyncStopped = false
 		if (sync) sync.start()
+		bus.emit(bus.STATE_CHANGE)
+	})
+
+	bus.on('feed:set-sync-interval', (newInterval) => {
+		newInterval = Math.max(newInterval, 1)
+		if (newInterval === state.feedSyncInterval) return; // nothing changed, abort
+
+		// todo: change `sync`'s interval directly
+		// clean up
+		if (sync) {
+			sync.stop()
+			sync = null
+		}
+
+		state.feedSyncInterval = newInterval
+		if (state.feedUrl !== null) resetSync()
+
 		bus.emit(bus.STATE_CHANGE)
 	})
 }
