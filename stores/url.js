@@ -56,7 +56,7 @@ const urlStore = (state, bus) => {
 		// abort if nothing changed
 		if (newLocSearch === location.search) return;
 		history.replaceState(pluckedState, '_', newLocSearch)
-	}, 200, {leading: true})
+	}, 500, {leading: true})
 	bus.on(bus.STATE_CHANGE, updateQueryStringWithState)
 
 	const initialState = pluckState(qsParse(location.search.slice(1)))
