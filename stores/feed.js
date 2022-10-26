@@ -3,6 +3,7 @@ import {parse as parseContentType} from 'content-type'
 const {Buffer} = require('buffer/') // trailing slash is intentional
 const {FeedMessage} = require('gtfs-rt-bindings')
 import * as syncViaPeriodicFetch from 'fetch-periodic-sync'
+import addDelaysToVehiclePositions from '../lib/add-tripupdate-delays-to-vehiclepositions'
 
 const MAX_FEED_SIZE = 5 * 1024 * 1024 // 5mb
 
@@ -47,6 +48,8 @@ const feedStore = (state, bus) => {
 			err.response = res
 			throw err
 		}
+
+		addDelaysToVehiclePositions(data)
 
 		state.feedError = null
 		state.feedRawData = buf
