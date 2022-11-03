@@ -1,7 +1,7 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 
-import * as EventEmitter from 'events'
+import EventEmitter from 'events'
 import {render, h} from 'preact'
 import viewStore from './stores/view'
 import feedStore from './stores/feed'
