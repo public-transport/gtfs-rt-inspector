@@ -11,6 +11,16 @@ It is deployed at [`public-transport.github.io/gtfs-rt-inspector/`](https://publ
 ![screenshot of the map view showing a feed's vehicle positions](docs/screenshot-map.png)
 
 
+## supported URL parameters
+
+URL parameter | description | default
+-|-|-
+`feedUrl` | URL of the GTFS-RT feed | –
+`feedSyncStopped` | if the feed should be re-fetched periodically | `true`
+`feedSyncInterval` | how often the feed should be re-fetched, in seconds | `30`
+`view` | tab shown in the UI | `log`
+
+
 ## Contributing
 
 If you have a question or need support using `gtfs-rt-inspector`, please double-check your code and setup first. If you think you have found a bug or want to propose a feature, use [the issues page](https://github.com/derhuerst/gtfs-rt-inspector/issues).
