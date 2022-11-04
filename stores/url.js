@@ -31,6 +31,11 @@ const PERSISTED_STATE_FIELDS = {
 		decode: decodeString,
 		apply: (view, bus) => bus.emit('view:set', view),
 	},
+	// stores/focused-trip-id
+	'focusedTripId': {
+		decode: decodeString,
+		apply: (tripId, bus) => bus.emit('focus-trip-id', tripId),
+	},
 }
 
 const pluckState = (state) => {

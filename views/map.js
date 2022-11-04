@@ -3,6 +3,15 @@ import mapboxgl from 'mapbox-gl'
 
 const MAPBOX_GL_CSS_URL = '/mapbox-gl.css'
 
+// Mapbox GL JS currently doesn't support SVG icons
+const TRIP_SHAPE_ARROW_URL = '/arrow.png'
+// const TRIP_SHAPE_ARROW_URL = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100px' height='100px'%3E%3Cpath d='M10 15 L15 10 L70 50 L15 90 L10 85 L35 50 z' fill='%23e0e0e0' stroke='%23e0e0e0' stroke-width='10px' stroke-linejoin='round' /%3E%3C/svg%3E`
+
+const FOCUSED_TRIP_SHAPE_OPACITY = {
+	base: .3,
+	stops: [[9, .3], [15, .8]],
+}
+
 mapboxgl.accessToken = process.env.MAPBOX_TOKEN
 // https://docs.mapbox.com/mapbox-gl-js/api/properties/#prewarm
 setTimeout(() => {
@@ -27,7 +36,7 @@ class MapView extends Component {
 		this.ref = createRef()
 	}
 
-	updateMap() {
+	updateVehiclePositions() {
 		const {feedData} = this.props.state
 		const entities = feedData.entity || []
 		const positions = entities.filter(e => e.vehicle && e.vehicle.position)
@@ -43,7 +52,8 @@ class MapView extends Component {
 			features: positions.map(entity => ({
 				type: 'Feature',
 				properties: {
-					// todo: vehicle.(id, label, license_place), trip.(id, route_id, st_date, st_time)
+					trip_id: entity.vehicle.trip?.trip_id,
+					// todo: vehicle.(id, label, license_place), trip.(route_id, st_date, st_time)
 					// This is not standard GTFS-RT, but added by
 					// lib/add-tripupdate-delays-to-vehiclepositions.
 					delay: entity.vehicle.delay,
@@ -73,7 +83,25 @@ class MapView extends Component {
 		this.map.fitBounds(bounds, {padding: 50})
 	}
 
+	updateFocusedTripShape() {
+		const {focusedTripShape} = this.props.state
+		const src = this.map.getSource('focused-trip-shape')
+
+		if (focusedTripShape === null) {
+			src.setData({type: 'FeatureCollection', features: []})
+		} else {
+			src.setData(focusedTripShape)
+		}
+	}
+
+	updateMap() {
+		this.updateVehiclePositions()
+		this.updateFocusedTripShape()
+	}
+
 	componentDidMount() {
+		const {emit} = this.props
+
 		putMapboxGLCss()
 
 		this.map = new mapboxgl.Map({
@@ -100,6 +128,7 @@ class MapView extends Component {
 					},
 					'circle-color': [
 						'case',
+						// todo: highlight if trip_id === state.focusedTripId
 						['!=', ['get', 'delay'], null],
 						[
 							'interpolate',
@@ -118,6 +147,53 @@ class MapView extends Component {
 			})
 			this.map.on('mouseleave', 'vehicle-positions', () => {
 				this.map.getCanvas().style.cursor = ''
+			})
+			this.map.on('click', 'vehicle-positions', (e) => {
+				const tripId = e.features[0]?.properties.trip_id || null
+				emit('focus-trip-id', tripId)
+			})
+
+			this.map.addSource('focused-trip-shape', {
+				type: 'geojson',
+				data: null,
+			})
+			this.map.addLayer({
+				id: 'focused-trip-shape',
+				source: 'focused-trip-shape',
+				type: 'line',
+				paint: {
+					'line-width': {
+						base: 1,
+						stops: [[1, .5], [20, 3]],
+					},
+					'line-color': '#e0e0e0',
+					'line-opacity': FOCUSED_TRIP_SHAPE_OPACITY,
+				},
+			})
+
+			// todo: instead show all active vehicles in their current orientation, according to the shape?
+			const map = this.map
+			map.loadImage(TRIP_SHAPE_ARROW_URL, (err, image) => {
+				if (err) {
+					console.error('failed to load trip shape arrow', err)
+					return;
+				}
+				map.addImage('focused-trip-shape-arrow', image)
+				map.addLayer({
+					id: 'focused-trip-shape-arrows',
+					type: 'symbol',
+					source: 'focused-trip-shape',
+					paint: {
+						'icon-color': '#e0e0e0',
+						'icon-opacity': FOCUSED_TRIP_SHAPE_OPACITY,
+					},
+					layout: {
+						'symbol-placement': 'line',
+						'icon-ignore-placement': true,
+						'icon-image': 'focused-trip-shape-arrow',
+						'icon-size': .1,
+					},
+				})
 			})
 
 			this.updateMap()

@@ -19,6 +19,7 @@ URL parameter | description | default
 `feedSyncStopped` | if the feed should be re-fetched periodically | `true`
 `feedSyncInterval` | how often the feed should be re-fetched, in seconds | `30`
 `view` | tab shown in the UI | `log`
+`focusedTripId` | `trip_id` whose shape is highlighted on the map | –
 
 
 ## Contributing
