@@ -6,6 +6,16 @@ import {parseTemplate as parseUrlTemplate} from 'url-template'
 
 const hasProp = (o, k) => Object.prototype.hasOwnProperty.call(o, k)
 
+const checkIfFeedContainsFocusedTripId = (feedData, focusedTripId) => {
+	const entities = feedData?.entity
+	if (!Array.isArray(entities)) return;
+
+	return entities.some((e) => (
+		e.vehicle?.trip?.trip_id === focusedTripId
+		|| e.trip_update?.trip?.trip_id === focusedTripId
+	))
+}
+
 const focusedTripIdStore = (state, bus) => {
 	const _fetchJson = async (url, options = {}) => {
 		// todo: make configurable via `bus`?
@@ -82,6 +92,23 @@ const focusedTripIdStore = (state, bus) => {
 	state.focusedTripId = null
 	state.focusedTripShape = null
 
+	let feedContainsFocusedTripId = false
+	const checkIfFeedStillContainsFocusedTripId = () => {
+		if (state.focusedTripId === null) return;
+
+		const nowContains = checkIfFeedContainsFocusedTripId(
+			state.feedData,
+			state.focusedTripId,
+		)
+		// feed contained trip_id before, not anymore
+		if (feedContainsFocusedTripId && !nowContains) {
+			state.focusedTripId = null
+			state.focusedTripShape = null
+			bus.emit(bus.STATE_CHANGE)
+		}
+	}
+	bus.on('feed:data-change', checkIfFeedStillContainsFocusedTripId)
+
 	let fetchShapeController = new AbortController()
 	const fetchShape = async (shapeId, tripId) => {
 		fetchShapeController = new AbortController()
@@ -122,6 +149,8 @@ const focusedTripIdStore = (state, bus) => {
 
 		state.focusedTripId = tripId
 		state.focusedTripShape = null
+		// feed might not contain trip_id anymore
+		checkIfFeedStillContainsFocusedTripId()
 
 		refetchFocusedTripShape()
 
