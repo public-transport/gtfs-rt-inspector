@@ -32,6 +32,14 @@ const PERSISTED_STATE_FIELDS = {
 		apply: (view, bus) => bus.emit('view:set', view),
 	},
 	// stores/focused-trip-id
+	'shapeIdsByTripIdUrl': {
+		decode: decodeString,
+		apply: (url, bus) => bus.emit('shape-ids-by-trip-id-url:set', url),
+	},
+	'shapeUrl': {
+		decode: decodeString,
+		apply: (url, bus) => bus.emit('shape-url:set', url),
+	},
 	'focusedTripId': {
 		decode: decodeString,
 		apply: (tripId, bus) => bus.emit('focus-trip-id', tripId),

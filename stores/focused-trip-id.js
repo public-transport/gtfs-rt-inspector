@@ -1,15 +1,12 @@
 import AbortController from 'abort-controller'
 import createFetch from 'fetch-ponyfill'
 const {Request, fetch} = createFetch()
-import pkg from '../package.json' assert {type: 'json'}
+import {parseTemplate as parseUrlTemplate} from 'url-template'
+// import pkg from '../package.json' assert {type: 'json'}
 
 const hasProp = (o, k) => Object.prototype.hasOwnProperty.call(o, k)
 
 const focusedTripIdStore = (state, bus) => {
-	// todo: make these configurable via `bus`
-	const SHAPES_BASE_URL = 'http://localhost:3001/trimet-2022-10-25/shapes/'
-	const SHAPES_USER_AGENT = `${pkg.name} at ${location.host}`
-
 	const _fetchJson = async (url, options = {}) => {
 		// todo: make configurable via `bus`?
 		// const userAgent = `${pkg.name} at ${location.host}`
@@ -35,8 +32,52 @@ const focusedTripIdStore = (state, bus) => {
 		return await res.json()
 	}
 
-	// todo: fetch() this data on-the-fly from somewhere
-	const shapeIdsByTripId = {}
+	// todo: make these configurable via `bus`
+	state.shapeIdsByTripIdUrl = '/shape-ids-by-trip-id.json'
+	bus.on('shape-ids-by-trip-id-url:set', (newShapeIdsByTripIdUrl) => {
+		if (state.shapeIdsByTripIdUrl === newShapeIdsByTripIdUrl) return;
+
+		state.shapeIdsByTripIdUrl = newShapeIdsByTripIdUrl
+		refetchShapeIdsByTripId()
+		bus.emit(bus.STATE_CHANGE)
+	})
+
+	let fetchShapeIdsByTripIdController = new AbortController()
+	const fetchShapeIdsByTripId = async () => {
+		fetchShapeIdsByTripIdController = new AbortController()
+
+		console.debug(`fetching shape IDs from ${state.shapeIdsByTripIdUrl}`)
+		const shapeIds = await _fetchJson(state.shapeIdsByTripIdUrl, {
+			signal: fetchShapeIdsByTripIdController.signal,
+		})
+		return shapeIds
+	}
+
+	let shapeIdsByTripId = {}
+	const refetchShapeIdsByTripId = () => {
+		fetchShapeIdsByTripIdController.abort()
+
+		fetchShapeIdsByTripId()
+		.then((shapeIds) => {
+			shapeIdsByTripId = shapeIds
+			refetchFocusedTripShape()
+		})
+		.catch((err) => {
+			// todo: show this error in the UI
+			console.error(`failed to fetch shape IDs`, err)
+		})
+	}
+
+	state.shapeUrl = '/shapes/{shape_id}.geo.json'
+	let shapeUrlTpl = parseUrlTemplate(state.shapeUrl)
+	bus.on('shape-url:set', (newShapeUrl) => {
+		if (state.shapeUrl === newShapeUrl) return;
+
+		state.shapeUrl = newShapeUrl
+		shapeUrlTpl = parseUrlTemplate(state.shapeUrl)
+		refetchFocusedTripShape()
+		bus.emit(bus.STATE_CHANGE)
+	})
 
 	state.focusedTripId = null
 	state.focusedTripShape = null
@@ -45,7 +86,7 @@ const focusedTripIdStore = (state, bus) => {
 	const fetchShape = async (shapeId, tripId) => {
 		fetchShapeController = new AbortController()
 
-		const url = `${SHAPES_BASE_URL}${shapeId}.geo.json`
+		const url = shapeUrlTpl.expand({shape_id: shapeId})
 		console.debug(`fetching shape ${shapeId} for trip ${tripId} from ${url}`)
 
 		const t0 = Date.now()

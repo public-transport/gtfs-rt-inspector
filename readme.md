@@ -20,6 +20,8 @@ URL parameter | description | default
 `feedSyncInterval` | how often the feed should be re-fetched, in seconds | `30`
 `view` | tab shown in the UI | `log`
 `focusedTripId` | `trip_id` whose shape is highlighted on the map | –
+`shapeIdsByTripIdUrl` | URL of the `trip_id` => `shape_id` JSON file, used for showing a vehicle's trip's shape on the map | `/shape-ids-by-trip-id.json`
+`shapeUrl` | [URL template](https://tools.ietf.org/html/rfc6570) for a shape, used for showing a vehicle's trip's shape on the map | `/shapes/{shape_id}.geo.json`
 
 
 ## Contributing
