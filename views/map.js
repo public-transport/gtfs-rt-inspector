@@ -61,6 +61,7 @@ class MapView extends Component {
 		}
 
 		const src = this.map.getSource('vehicle-positions')
+		if (!src) return;
 		src.setData({
 			type: 'FeatureCollection',
 			features: positions.map(entity => ({
@@ -101,6 +102,7 @@ class MapView extends Component {
 	updateFocusedTripShape() {
 		const {focusedTripShape} = this.props.state
 		const src = this.map.getSource('focused-trip-shape')
+		if (!src) return;
 
 		if (focusedTripShape === null) {
 			src.setData({type: 'FeatureCollection', features: []})
@@ -122,6 +124,7 @@ class MapView extends Component {
 	}
 
 	updateMap() {
+		if (!this.map) return;
 		this.updateVehiclePositions()
 		this.updateFocusedTripShape()
 		this.updateFocusedVehiclePosition()
@@ -182,9 +185,9 @@ class MapView extends Component {
 				paint: {
 					'line-width': {
 						base: 1,
-						stops: [[1, .5], [20, 3]],
+						stops: [[1, .6], [20, 4]],
 					},
-					'line-color': '#e0e0e0',
+					'line-color': '#44a8eb',
 					'line-opacity': FOCUSED_TRIP_SHAPE_OPACITY,
 				},
 			})
