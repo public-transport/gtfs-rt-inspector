@@ -31,7 +31,7 @@ const PERSISTED_STATE_FIELDS = {
 		decode: decodeString,
 		apply: (view, bus) => bus.emit('view:set', view),
 	},
-	// stores/focused-trip-id
+	// stores/focus
 	'shapeIdsByTripIdUrl': {
 		decode: decodeString,
 		apply: (url, bus) => bus.emit('shape-ids-by-trip-id-url:set', url),

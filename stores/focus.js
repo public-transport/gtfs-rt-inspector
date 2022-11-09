@@ -16,7 +16,7 @@ const checkIfFeedContainsFocusedTripId = (feedData, focusedTripId) => {
 	))
 }
 
-const focusedTripIdStore = (state, bus) => {
+const focusStore = (state, bus) => {
 	const _fetchJson = async (url, options = {}) => {
 		// todo: make configurable via `bus`?
 		// const userAgent = `${pkg.name} at ${location.host}`
@@ -158,4 +158,4 @@ const focusedTripIdStore = (state, bus) => {
 	})
 }
 
-export default focusedTripIdStore
+export default focusStore
