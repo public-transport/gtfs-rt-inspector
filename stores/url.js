@@ -44,6 +44,10 @@ const PERSISTED_STATE_FIELDS = {
 		decode: decodeString,
 		apply: (tripId, bus) => bus.emit('focus-trip-id', tripId),
 	},
+	'focusedVehicleId': {
+		decode: decodeString,
+		apply: (vId, bus) => bus.emit('focus-vehicle-id', vId),
+	},
 }
 
 const pluckState = (state) => {

@@ -7,6 +7,20 @@ const MAPBOX_GL_CSS_URL = '/mapbox-gl.css'
 const TRIP_SHAPE_ARROW_URL = '/arrow.png'
 // const TRIP_SHAPE_ARROW_URL = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100px' height='100px'%3E%3Cpath d='M10 15 L15 10 L70 50 L15 90 L10 85 L35 50 z' fill='%23e0e0e0' stroke='%23e0e0e0' stroke-width='10px' stroke-linejoin='round' /%3E%3C/svg%3E`
 
+const VEHICLE_POINT_COLOR = [
+	'case',
+	['!=', ['get', 'delay'], null],
+	[
+		'interpolate',
+		['linear'],
+		['get', 'delay'],
+		0, ['to-color', '#2ecc71'],
+		90, ['to-color', '#eebb00'],
+		210, ['to-color', '#ee2200'],
+	],
+	'#e0e0e0', // todo: pick better color?
+]
+
 const FOCUSED_TRIP_SHAPE_OPACITY = {
 	base: .3,
 	stops: [[9, .3], [15, .8]],
@@ -52,6 +66,7 @@ class MapView extends Component {
 			features: positions.map(entity => ({
 				type: 'Feature',
 				properties: {
+					vehicleId: entity.vehicle.vehicle?.id,
 					trip_id: entity.vehicle.trip?.trip_id,
 					// todo: vehicle.(id, label, license_place), trip.(route_id, st_date, st_time)
 					// This is not standard GTFS-RT, but added by
@@ -94,9 +109,22 @@ class MapView extends Component {
 		}
 	}
 
+	updateFocusedVehiclePosition() {
+		const {focusedVehiclePosition} = this.props.state
+		const src = this.map.getSource('focused-vehicle-position')
+		if (!src) return;
+
+		if (focusedVehiclePosition === null) {
+			src.setData({type: 'FeatureCollection', features: []})
+		} else {
+			src.setData(focusedVehiclePosition)
+		}
+	}
+
 	updateMap() {
 		this.updateVehiclePositions()
 		this.updateFocusedTripShape()
+		this.updateFocusedVehiclePosition()
 	}
 
 	componentDidMount() {
@@ -126,20 +154,7 @@ class MapView extends Component {
 						base: 1.5,
 						stops: [[1, 1], [20, 35]],
 					},
-					'circle-color': [
-						'case',
-						// todo: highlight if trip_id === state.focusedTripId
-						['!=', ['get', 'delay'], null],
-						[
-							'interpolate',
-							['linear'],
-							['get', 'delay'],
-							0, ['to-color', '#2ecc71'],
-							90, ['to-color', '#eebb00'],
-							210, ['to-color', '#ee2200'],
-						],
-						'#e0e0e0', // todo: pick better color?
-					],
+					'circle-color': VEHICLE_POINT_COLOR,
 				},
 			})
 			this.map.on('mouseenter', 'vehicle-positions', () => {
@@ -149,6 +164,8 @@ class MapView extends Component {
 				this.map.getCanvas().style.cursor = ''
 			})
 			this.map.on('click', 'vehicle-positions', (e) => {
+				const vehicleId = e.features[0]?.properties.vehicleId || null
+				emit('focus-vehicle-id', vehicleId)
 				const tripId = e.features[0]?.properties.trip_id || null
 				emit('focus-trip-id', tripId)
 			})
@@ -157,6 +174,7 @@ class MapView extends Component {
 				type: 'geojson',
 				data: null,
 			})
+			// todo: visualize bearing?
 			this.map.addLayer({
 				id: 'focused-trip-shape',
 				source: 'focused-trip-shape',
@@ -184,16 +202,33 @@ class MapView extends Component {
 					type: 'symbol',
 					source: 'focused-trip-shape',
 					paint: {
-						'icon-color': '#e0e0e0',
 						'icon-opacity': FOCUSED_TRIP_SHAPE_OPACITY,
 					},
 					layout: {
 						'symbol-placement': 'line',
 						'icon-ignore-placement': true,
 						'icon-image': 'focused-trip-shape-arrow',
-						'icon-size': .1,
+						'icon-size': .15,
 					},
 				})
+			})
+
+			this.map.addSource('focused-vehicle-position', {
+				type: 'geojson',
+				data: null,
+			})
+			// todo: visualize bearing?
+			this.map.addLayer({
+				id: 'focused-vehicle-position',
+				source: 'focused-vehicle-position',
+				type: 'circle',
+				paint: {
+					'circle-radius': {
+						base: 5,
+						stops: [[1, 5], [20, 100]],
+					},
+					'circle-color': VEHICLE_POINT_COLOR,
+				},
 			})
 
 			this.updateMap()

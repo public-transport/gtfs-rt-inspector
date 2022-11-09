@@ -87,7 +87,22 @@ const renderOccupancyStatus = (oS) => {
 	return '?'
 }
 
-const renderTripUpdate = (entity) => {
+const renderVehicleId = (vId, vehPos, emit) => {
+	// todo: add missing `href`
+	const onClick = (ev) => {
+		emit('focus-vehicle-id', vId)
+		emit('focus-trip-id', vehPos.trip.trip_id)
+		emit('view:set', 'map')
+		ev.preventDefault()
+	}
+	return (
+		<a href="#" onClick={onClick} alt="show vehicle on the map">
+			<code>{vId}</code>
+		</a>
+	)
+}
+
+const renderTripUpdate = (entity, emit) => {
 	const t = entity.trip_update.trip || {}
 	const v = entity.trip_update.vehicle || {}
 	// todo: stop_time_update
@@ -108,7 +123,7 @@ const renderTripUpdate = (entity) => {
 		</tr>
 	)
 }
-const renderTripUpdates = (feed) => {
+const renderTripUpdates = (feed, emit) => {
 	const tripUpdates = feed.entity
 	.filter(entity => !!entity.trip_update)
 
@@ -143,7 +158,7 @@ const renderTripUpdates = (feed) => {
 	)
 }
 
-const renderVehiclePosition = (entity) => {
+const renderVehiclePosition = (entity, emit) => {
 	const t = entity.vehicle.trip || {}
 	const v = entity.vehicle.vehicle || {}
 	// todo: stop_time_update
@@ -156,7 +171,7 @@ const renderVehiclePosition = (entity) => {
 			<td><code>{t.trip_id}</code></td>
 			<td>{renderStartDate(t.start_date)}</td>
 			<td>{renderStartTime(t.start_time)}</td>
-			<td><code>{v.id}</code></td>
+			<td>{renderVehicleId(v.id, entity.vehicle, emit)}</td>
 			<td><code>{v.label}</code></td>
 			<td><code>{v.license_plate}</code></td>
 			<td><code>{entity.vehicle.current_stop_sequence}</code></td>
@@ -168,7 +183,7 @@ const renderVehiclePosition = (entity) => {
 		</tr>
 	)
 }
-const renderVehiclePositions = (feed) => {
+const renderVehiclePositions = (feed, emit) => {
 	const vehiclePositions = feed.entity
 	.filter(entity => !!entity.vehicle)
 
@@ -200,7 +215,7 @@ const renderVehiclePositions = (feed) => {
 					</tr>
 				</thead>
 				<tbody>
-					{vehiclePositions.map(renderVehiclePosition)}
+					{vehiclePositions.map(vehPos => renderVehiclePosition(vehPos, emit))}
 				</tbody>
 			</table>
 		</div>
@@ -219,8 +234,8 @@ const inspectorView = ({state, emit}) => {
 
 	return (
 		<div class="inspector">
-			{renderTripUpdates(feed)}
-			{renderVehiclePositions(feed)}
+			{renderTripUpdates(feed, emit)}
+			{renderVehiclePositions(feed, emit)}
 		</div>
 	)
 }

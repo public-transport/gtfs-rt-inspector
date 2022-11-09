@@ -6,6 +6,15 @@ import {parseTemplate as parseUrlTemplate} from 'url-template'
 
 const hasProp = (o, k) => Object.prototype.hasOwnProperty.call(o, k)
 
+const checkIfFeedContainsFocusedVehicleId = (feedData, focusedVehicleId) => {
+	const entities = feedData?.entity
+	if (!Array.isArray(entities)) return false
+
+	return entities.some((e) => (
+		e.vehicle?.vehicle?.id === focusedVehicleId
+	))
+}
+
 const checkIfFeedContainsFocusedTripId = (feedData, focusedTripId) => {
 	const entities = feedData?.entity
 	if (!Array.isArray(entities)) return;
@@ -86,6 +95,59 @@ const focusStore = (state, bus) => {
 		state.shapeUrl = newShapeUrl
 		shapeUrlTpl = parseUrlTemplate(state.shapeUrl)
 		refetchFocusedTripShape()
+		bus.emit(bus.STATE_CHANGE)
+	})
+
+	state.focusedVehicleId = null
+	state.focusedVehiclePosition = null
+
+	let feedContainsFocusedVehicleId = false
+	const checkIfFeedStillContainsFocusedVehicleId = () => {
+		if (state.focusedVehicleId === null) return;
+
+		const nowContains = checkIfFeedContainsFocusedVehicleId(
+			state.feedData,
+			state.focusedVehicleId,
+		)
+		// feed contained vehicle ID before, not anymore
+		if (feedContainsFocusedVehicleId && !nowContains) {
+			state.focusedVehicleId = null
+			state.focusedVehiclePosition = null
+			bus.emit(bus.STATE_CHANGE)
+		} else if (!feedContainsFocusedVehicleId && nowContains) {
+			const vehicleId = state.focusedVehicleId
+			const entities = state.feedData?.entity || []
+			const vehPos = entities.find(e => e.vehicle?.vehicle?.id === vehicleId)
+			if (vehPos) {
+				state.focusedVehiclePosition = {
+					type: 'Feature',
+					properties: {
+						vehicleId,
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [
+							vehPos.vehicle.position.longitude,
+							vehPos.vehicle.position.latitude,
+						],
+					},
+				}
+			} else {
+				state.focusedVehiclePosition = null
+			}
+			bus.emit(bus.STATE_CHANGE)
+		}
+	}
+	bus.on('feed:data-change', checkIfFeedStillContainsFocusedVehicleId)
+
+	bus.on('focus-vehicle-id', (vehicleId) => {
+		if (vehicleId === state.focusedVehicleId) return; // nothing changed, abort
+
+		state.focusedVehicleId = vehicleId
+		state.focusedVehiclePosition = null
+		// feed might not contain vehicle ID anymore
+		checkIfFeedStillContainsFocusedVehicleId()
+
 		bus.emit(bus.STATE_CHANGE)
 	})
 
