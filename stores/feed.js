@@ -15,6 +15,7 @@ const CONTENT_TYPES = [
 
 const feedStore = (state, bus) => {
 	state.feedUrl = null
+	state.apiKey = null
 	state.feedSyncStopped = false
 	state.feedSyncInterval = 30 // 30s
 	state.feedSyncing = false
@@ -89,6 +90,25 @@ const feedStore = (state, bus) => {
 		}
 
 		state.feedUrl = url
+		state.feedSyncing = false
+		state.feedRawData = null
+		state.feedData = null
+		if (url !== null) resetSync()
+
+		bus.emit('feed:data-change')
+		bus.emit(bus.STATE_CHANGE)
+	})
+	
+	bus.on('feed:set-api-key', (key) => {
+		if (key === state.apiKey) return; // nothing changed, abort
+
+		// clean up
+		if (sync) {
+			sync.stop()
+			sync = null
+		}
+
+		state.apiKey = url
 		state.feedSyncing = false
 		state.feedRawData = null
 		state.feedData = null
