@@ -36,6 +36,7 @@ const focusStore = (state, bus) => {
 				accept: 'application/json',
 				// todo: this fails with CORS if the server doesn't allow it
 				// 'user-agent': userAgent,
+				'x-api-key': state.apiKey,
 			},
 			...options,
 		})
