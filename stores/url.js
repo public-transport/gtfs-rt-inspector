@@ -48,6 +48,10 @@ const PERSISTED_STATE_FIELDS = {
 		decode: decodeString,
 		apply: (vId, bus) => bus.emit('focus-vehicle-id', vId),
 	},
+	'apiKey': {
+	    decode! decodeString,
+		apply: (key, bus) => bus.emit('feed:set-api-key', key),
+	},
 }
 
 const pluckState = (state) => {
