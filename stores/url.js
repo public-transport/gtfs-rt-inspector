@@ -1,7 +1,8 @@
 import memoize from 'lodash/memoize'
 import debounce from 'lodash/debounce'
 import pick from 'lodash/pick'
-import {parse as _qsParse, stringify as qsStringify} from 'query-string'
+import _queryString from 'query-string'
+const {parse: _qsParse, stringify: qsStringify} = _queryString
 
 const qsParse = memoize(_qsParse)
 
