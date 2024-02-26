@@ -22,9 +22,9 @@
 	"scripts": {
 		"lint": "eslint --ignore-path .gitignore .",
 		"build:copy": "cp assets/* $(node -p 'require.resolve(\"mapbox-gl/dist/mapbox-gl.css\")') dist/",
-		"build:bundle": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 index.js",
+		"build:bundle": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --define:global=globalThis --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 index.js",
 		"build": "npm run build:copy && npm run build:bundle",
-		"build:watch": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 --watch index.js"
+		"build:watch": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --define:global=globalThis --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 --watch index.js"
 	},
 	"dependencies": {
 		"abort-controller": "^3.0.0",
