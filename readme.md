@@ -10,6 +10,8 @@ It is deployed at [`public-transport.github.io/gtfs-rt-inspector/`](https://publ
 ![screenshot of the inspector view showing a feed's data](docs/screenshot-inspector.png)
 ![screenshot of the map view showing a feed's vehicle positions](docs/screenshot-map.png)
 
+*Note*: If your feed doesn't allow Browser-based access because it does not set [CORS](https://enable-cors.org) headers, as a workaround, you can run e.g. [`warp-cors`](https://github.com/Bassetts/warp-cors) locally to proxy it with CORS headers. (Do not deploy such a proxy to production if you don't know about the consequences!)
+
 
 ## supported URL parameters
 
