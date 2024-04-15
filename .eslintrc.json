@@ -5,6 +5,9 @@
 		"es6": true,
 		"node": true
 	},
+	"globals": {
+		"__MAPBOX_TOKEN__": "readonly"
+	},
 	"parserOptions": {
 		"ecmaVersion": 2020,
 		"sourceType": "module",

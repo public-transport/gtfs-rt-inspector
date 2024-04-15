@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce'
 import {parse as parseContentType} from 'content-type'
-const {Buffer} = require('buffer/') // trailing slash is intentional
-const {FeedMessage} = require('gtfs-rt-bindings')
+import {Buffer} from 'buffer/' // trailing slash is intentional
+import {FeedMessage} from 'gtfs-rt-bindings'
 import syncViaPeriodicFetch from 'fetch-periodic-sync'
 
 const MAX_FEED_SIZE = 5 * 1024 * 1024 // 5mb

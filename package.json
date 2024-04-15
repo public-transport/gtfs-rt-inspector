@@ -21,10 +21,8 @@
 	},
 	"scripts": {
 		"lint": "eslint --ignore-path .gitignore .",
-		"build:copy": "cp assets/* $(node -p 'require.resolve(\"mapbox-gl/dist/mapbox-gl.css\")') dist/",
-		"build:bundle": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --define:global=globalThis --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 index.js",
-		"build": "npm run build:copy && npm run build:bundle",
-		"build:watch": "esbuild --loader:.js=jsx --jsx-import-source=preact --jsx=automatic --define:process.env.MAPBOX_TOKEN=\\'$MAPBOX_TOKEN\\' --define:global=globalThis --bundle --minify --outfile=dist/main.js --sourcemap --target=chrome96,firefox91,safari14 --watch index.js"
+		"build": "vite build",
+		"dev": "vite"
 	},
 	"dependencies": {
 		"abort-controller": "^3.0.0",
@@ -39,14 +37,15 @@
 		"mapbox-gl": "^2.1.1",
 		"ms": "^2.1.3",
 		"object-inspect": "^1.11.0",
-		"preact": "^10.5.7",
+		"preact": "^10.19.6",
 		"query-string": "^8.2.0",
 		"regenerator-runtime": "^0.14.1",
 		"url-template": "^3.1.0"
 	},
 	"devDependencies": {
-		"esbuild": "^0.20.0",
-		"eslint": "^8.12.0"
+		"@preact/preset-vite": "^2.8.2",
+		"eslint": "^8.12.0",
+		"vite": "^5.2.8"
 	},
 	"browserslist": [
 		"defaults"

@@ -1,10 +1,9 @@
 import {Component, createRef, h} from 'preact'
 import mapboxgl from 'mapbox-gl'
-
-const MAPBOX_GL_CSS_URL = '/mapbox-gl.css'
-
 // Mapbox GL JS currently doesn't support SVG icons
-const TRIP_SHAPE_ARROW_URL = '/arrow.png'
+import TRIP_SHAPE_ARROW_URL from '../assets/arrow.png'
+import 'mapbox-gl/dist/mapbox-gl.css';
+
 // const TRIP_SHAPE_ARROW_URL = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100px' height='100px'%3E%3Cpath d='M10 15 L15 10 L70 50 L15 90 L10 85 L35 50 z' fill='%23e0e0e0' stroke='%23e0e0e0' stroke-width='10px' stroke-linejoin='round' /%3E%3C/svg%3E`
 
 const VEHICLE_POINT_COLOR = [
@@ -26,22 +25,12 @@ const FOCUSED_TRIP_SHAPE_OPACITY = {
 	stops: [[9, .3], [15, .8]],
 }
 
-mapboxgl.accessToken = process.env.MAPBOX_TOKEN
+mapboxgl.accessToken = __MAPBOX_TOKEN__
 // https://docs.mapbox.com/mapbox-gl-js/api/properties/#prewarm
 setTimeout(() => {
 	mapboxgl.prewarm()
 }, 100)
 
-const putMapboxGLCss = () => {
-	const sheets = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'))
-	if (sheets.find(s => s.getAttribute('href') === MAPBOX_GL_CSS_URL)) return;
-
-	console.debug('dynamically inserting Mapbox GL CSS <link>')
-	const sheet = document.createElement('link')
-	sheet.setAttribute('rel', 'stylesheet')
-	sheet.setAttribute('href', MAPBOX_GL_CSS_URL)
-	document.head.appendChild(sheet)
-}
 
 // todo: sync map zoom & position with state
 class MapView extends Component {
@@ -132,8 +121,6 @@ class MapView extends Component {
 
 	componentDidMount() {
 		const {emit} = this.props
-
-		putMapboxGLCss()
 
 		this.map = new mapboxgl.Map({
 			container: this.ref.current,
