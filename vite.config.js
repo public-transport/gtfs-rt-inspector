@@ -10,7 +10,7 @@ export default defineConfig(({ command, mode }) => {
 			__MAPBOX_TOKEN__: JSON.stringify(env.MAPBOX_TOKEN),
 		},
 		plugins: [preact()],
-
+		base: '/gtfs-rt-inspector',
 		optimizeDeps: {
 			esbuildOptions: {
 				loader: {
