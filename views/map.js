@@ -34,13 +34,18 @@ setTimeout(() => {
 
 // todo: sync map zoom & position with state
 class MapView extends Component {
+
 	constructor() {
 		super()
+		this.state = {
+			initialLoad: true,
+		}
 		this.ref = createRef()
 	}
 
 	updateVehiclePositions() {
 		const {feedData} = this.props.state
+		const {initialLoad} = this.state
 		const entities = feedData.entity || []
 		const positions = entities.filter(e => e.vehicle && e.vehicle.position)
 
@@ -74,18 +79,21 @@ class MapView extends Component {
 		})
 
 		// fit map viewbox to data
-		const crd0 = [
-			positions[0].vehicle.position.longitude,
-			positions[0].vehicle.position.latitude,
-		]
-		const bounds = new mapboxgl.LngLatBounds(crd0, crd0)
-		for (const pos of positions) {
-			bounds.extend([
-				pos.vehicle.position.longitude,
-				pos.vehicle.position.latitude,
-			])
+		if (initialLoad) {
+			const crd0 = [
+				positions[0].vehicle.position.longitude,
+				positions[0].vehicle.position.latitude,
+			]
+			const bounds = new mapboxgl.LngLatBounds(crd0, crd0)
+			for (const pos of positions) {
+				bounds.extend([
+					pos.vehicle.position.longitude,
+					pos.vehicle.position.latitude,
+				])
+			}
+			this.map.fitBounds(bounds, {padding: 50})
+			this.setState({initialLoad: false})
 		}
-		this.map.fitBounds(bounds, {padding: 50})
 	}
 
 	updateFocusedTripShape() {
