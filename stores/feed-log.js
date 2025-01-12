@@ -27,6 +27,7 @@ const feedLogStore = (state, bus) => {
 			vehicleId: tu.trip_update.vehicle?.id,
 			vehicleLabel: tu.trip_update.vehicle?.label,
 			stopId: stu.stop_id,
+			scheduleRelationship: stu.schedule_relationship,
 			tArrival: stu.arrival?.time ?? null,
 			delay: stu.arrival?.delay ?? stu.departure?.delay,
 		})))
