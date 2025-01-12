@@ -4,6 +4,9 @@ import {renderDelay} from '../lib/render'
 const renderTimestamp = (t) => {
 	// todo: correct tz
 	// todo: abbreviate?
+	if (!t) {
+		return '?';
+	}
 	return new Date(t * 1000).toISOString()
 }
 
