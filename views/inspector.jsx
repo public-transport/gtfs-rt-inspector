@@ -1,5 +1,5 @@
 import {h} from 'preact'
-import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
+import {TripDescriptor, VehiclePosition} from 'gtfs-rt-bindings'
 import ms from 'ms'
 import {
 	MAX_LOG_ITEMS as MAX_TRIP_UPDATES,
@@ -22,13 +22,19 @@ const renderStartTime = (sT) => {
 
 const {
 	SCHEDULED,
-	SKIPPED,
-	NO_DATA,
-} = TripUpdate.StopTimeUpdate.ScheduleRelationship
-const renderScheduleRelationship = (sR) => {
+	ADDED,
+	UNSCHEDULED,
+	CANCELED,
+	DUPLICATED,
+	DELETED
+} = TripDescriptor.ScheduleRelationship
+const renderTripScheduleRelationship = (sR) => {
 	if (sR === SCHEDULED) return <code><abbr title="SCHEDULED">SCHED</abbr></code>
-	if (sR === SKIPPED) return <code><abbr title="SKIPPED">SKIP</abbr></code>
-	if (sR === NO_DATA) return <code><abbr title="NO_DATA">NO_DATA</abbr></code>
+	if (sR === ADDED) return <code><abbr title="ADDED">ADD</abbr></code>
+	if (sR === UNSCHEDULED) return <code><abbr title="UNSCHEDULED">UNSCHED</abbr></code>
+	if (sR === CANCELED) return <code><abbr title="CANCELED">CNCL</abbr></code>
+	if (sR === DUPLICATED) return <code><abbr title="DUPLICATED">DUPL</abbr></code>
+	if (sR === DELETED) return <code><abbr title="DELETED">DEL</abbr></code>
 	return '?'
 }
 
@@ -123,7 +129,7 @@ const renderTripUpdate = (entity, emit) => {
 			<td><code>{t.trip_id}</code></td>
 			<td>{renderStartDate(t.start_date)}</td>
 			<td>{renderStartTime(t.start_time)}</td>
-			<td>{renderScheduleRelationship(t.schedule_relationship)}</td>
+			<td>{renderTripScheduleRelationship(t.schedule_relationship)}</td>
 			<td><code>{v.id}</code></td>
 			<td><code>{v.label}</code></td>
 			<td><code>{v.license_plate}</code></td>
