@@ -1,8 +1,13 @@
+export const MAX_LOG_ITEMS = 1000;
+
 const feedLogStore = (state, bus) => {
+	state.feedLogFilter = null
+	state.unfilteredFeedLog = []
 	state.feedLog = []
 
-	bus.on('feed:data-change', () => {
+	const recomputeFeedLog = () => {
 		if (!state.feedData) {
+			state.unfilteredFeedLog = []
 			state.feedLog = []
 			return;
 		}
@@ -42,11 +47,34 @@ const feedLogStore = (state, bus) => {
 				: timeUntilA - timeUntilB
 		})
 
+		const query = state.feedLogFilter ?? ''
+		const filteredUpcomingArrivals = query
+			? upcomingArrivals
+			.filter(e => JSON.stringify(e).toLowerCase().includes(query))
+			: upcomingArrivals
+
+		const truncatedFilteredUpcomingArrivals = filteredUpcomingArrivals
+		// todo: allow pagination?
+		.slice(0, MAX_LOG_ITEMS)
+
 		// todo: log trips
 		// todo: log alerts
 		// todo: track StopTimeUpdates across feedData updates
-		state.feedLog = upcomingArrivals
-	})
+		state.unfilteredFeedLog = upcomingArrivals
+		state.feedLog = truncatedFilteredUpcomingArrivals
+		bus.emit(bus.STATE_CHANGE)
+	}
+
+	bus.on('feed-log:set-filter', (filter) => {
+		if (state.feedLogFilter === filter) {
+			return; // no changes necessary
+		}
+		state.feedLogFilter = filter
+
+		recomputeFeedLog()
+	}),
+
+	bus.on('feed:data-change', recomputeFeedLog)
 }
 
 export default feedLogStore

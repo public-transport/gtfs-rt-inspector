@@ -27,6 +27,16 @@ const PERSISTED_STATE_FIELDS = {
 			bus.emit('feed:set-sync-interval', interval)
 		},
 	},
+	// stores/feed-log
+	'feedLogFilter': {
+		decode: decodeString,
+		apply: (filter, bus) => bus.emit('feed-log:set-filter', filter),
+	},
+	// stores/inspector
+	'inspectorFilter': {
+		decode: decodeString,
+		apply: (filter, bus) => bus.emit('inspector:set-filter', filter),
+	},
 	// stores/view
 	'view': {
 		decode: decodeString,

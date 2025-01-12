@@ -1,7 +1,15 @@
 import {h} from 'preact'
 import {TripUpdate, VehiclePosition} from 'gtfs-rt-bindings'
 import ms from 'ms'
-import {renderDelay} from '../lib/render'
+import {
+	MAX_LOG_ITEMS as MAX_TRIP_UPDATES,
+	MAX_LOG_ITEMS as MAX_VEHICLE_POSITIONS,
+} from '../stores/feed-log'
+import {
+	renderDelay,
+	renderMaxItemsMsg,
+	renderFilterInput,
+} from '../lib/render'
 
 const renderStartDate = (sD) => {
 	if ('string' !== typeof sD || !sD) return '?'
@@ -123,13 +131,16 @@ const renderTripUpdate = (entity, emit) => {
 		</tr>
 	)
 }
-const renderTripUpdates = (feed, emit) => {
-	const tripUpdates = feed.entity
-	.filter(entity => !!entity.trip_update)
+const renderTripUpdates = (state, emit) => {
+	const {
+		tripUpdates,
+		unfilteredTripUpdates,
+	} = state
 
 	return (
 		<div>
-			<h2><code>TripUpdate</code>s ({tripUpdates.length})</h2>
+			<h2><code>TripUpdate</code>s ({tripUpdates.length} of {unfilteredTripUpdates.length})</h2>
+			{renderMaxItemsMsg(tripUpdates.length, MAX_TRIP_UPDATES)}
 			<table class="trip-updates">
 				<thead>
 					<tr>
@@ -183,13 +194,19 @@ const renderVehiclePosition = (entity, emit) => {
 		</tr>
 	)
 }
-const renderVehiclePositions = (feed, emit) => {
-	const vehiclePositions = feed.entity
-	.filter(entity => !!entity.vehicle)
+const renderVehiclePositions = (state, emit) => {
+	const {
+		vehiclePositions,
+		unfilteredVehiclePositions,
+	} = state
+	const setFilter = (filter) => {
+		emit('inspector:set-filter', filter)
+	}
 
 	return (
 		<div>
-			<h2><code>VehiclePosition</code>s ({vehiclePositions.length})</h2>
+			<h2><code>VehiclePosition</code>s ({vehiclePositions.length} of {unfilteredVehiclePositions.length})</h2>
+			{renderMaxItemsMsg(vehiclePositions.length, MAX_VEHICLE_POSITIONS)}
 			<table class="vehicle-positions">
 				<thead>
 					<tr>
@@ -232,10 +249,18 @@ const inspectorView = ({state, emit}) => {
 
 	// todo: support alerts
 
+	const {
+		inspectorFilter: filter,
+	} = state
+	const setFilter = (filter) => {
+		emit('inspector:set-filter', filter)
+	}
+
 	return (
 		<div class="inspector">
-			{renderTripUpdates(feed, emit)}
-			{renderVehiclePositions(feed, emit)}
+			{renderFilterInput(filter, setFilter)}
+			{renderTripUpdates(state, emit)}
+			{renderVehiclePositions(state, emit)}
 		</div>
 	)
 }

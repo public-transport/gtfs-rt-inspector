@@ -1,5 +1,10 @@
 import {h} from 'preact'
-import {renderDelay} from '../lib/render'
+import {MAX_LOG_ITEMS} from '../stores/feed-log'
+import {
+	renderDelay,
+	renderFilterInput,
+	renderMaxItemsMsg,
+} from '../lib/render'
 
 const renderTimestamp = (t) => {
 	// todo: correct tz
@@ -35,12 +40,20 @@ const renderFeedLogEntry = (entry) => {
 }
 
 const logView = ({state, emit}) => {
-	const totalEntries = state.feedLog.length
-	const feedLog = state.feedLog.slice(0, 1000)
+	const {
+		feedLogFilter,
+		feedLog,
+		unfilteredFeedLog,
+	} = state
+	const setFilter = (filter) => {
+		emit('feed-log:set-filter', filter)
+	}
 
 	return (
 		<div class="log">
-			<p>Showing {feedLog.length}{totalEntries > feedLog.length ? ' out of ' + totalEntries : null} <code>StopTimeUpdate</code>s.</p>
+			<h2><code>StopTimeUpdate</code>s ({feedLog.length} of {unfilteredFeedLog.length})</h2>
+			{renderFilterInput(feedLogFilter, setFilter)}
+			{renderMaxItemsMsg(feedLog.length, MAX_LOG_ITEMS)}
 			<table>
 				<thead>
 					<tr>

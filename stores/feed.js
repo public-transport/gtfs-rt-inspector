@@ -4,7 +4,7 @@ import {Buffer} from 'buffer/' // trailing slash is intentional
 import {FeedMessage} from 'gtfs-rt-bindings'
 import syncViaPeriodicFetch from 'fetch-periodic-sync'
 
-const MAX_FEED_SIZE = 5 * 1024 * 1024 // 5mb
+const MAX_FEED_SIZE = 128 * 1024 * 1024 // 5mb
 
 const CONTENT_TYPES = [
 	'application/octet-stream', // generic "binary" blob
