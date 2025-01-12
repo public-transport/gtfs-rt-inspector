@@ -40,7 +40,7 @@ const feedStore = (state, bus) => {
 		}
 
 		const buf = Buffer.from(await res.arrayBuffer())
-		const data = FeedMessage.decode(buf)
+		const data = FeedMessage.toObject(FeedMessage.decode(buf))
 		if (!data || !data.header || !Array.isArray(data.entity)) {
 			const err = new Error(`couldn't parse feed`)
 			err.rawFeed = buf
