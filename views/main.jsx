@@ -2,6 +2,7 @@ import {h} from 'preact'
 import Bar from './bar'
 import Log from './log'
 import Inspector from './inspector'
+import Raw from './raw'
 import _Map from './map'
 import Error from './error'
 
@@ -10,6 +11,7 @@ const mainView = ({state, emit}) => {
 		'log': Log,
 		'inspector': Inspector,
 		'map': _Map,
+		'raw': Raw
 	})[state.view] || Inspector
 	return (
 		<div class="app">

@@ -20,6 +20,7 @@ const barView = ({state, emit}) => {
 			{renderNavItem('log', state.view === 'log')}
 			{renderNavItem('inspector', state.view === 'inspector')}
 			{renderNavItem('map', state.view === 'map')}
+			{renderNavItem('raw', state.view === 'raw')}
 			<li><a href={pkg.homepage} target="_parent" title={name + ' homepage'}>?</a></li>
 		</ul>
 	)
