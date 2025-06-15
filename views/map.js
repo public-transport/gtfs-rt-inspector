@@ -53,24 +53,30 @@ class MapView extends Component {
 		if (!src) return;
 		src.setData({
 			type: 'FeatureCollection',
-			features: positions.map(entity => ({
-				type: 'Feature',
-				properties: {
-					vehicleId: entity.vehicle.vehicle?.id,
-					trip_id: entity.vehicle.trip?.trip_id,
-					// todo: vehicle.(id, label, license_place), trip.(route_id, st_date, st_time)
-					// This is not standard GTFS-RT, but added by
-					// lib/add-tripupdate-delays-to-vehiclepositions.
-					delay: entity.vehicle.delay,
-				},
-				geometry: {
-					type: 'Point',
-					coordinates: [
-						entity.vehicle.position.longitude,
-						entity.vehicle.position.latitude,
-					],
-				},
-			})),
+			features: positions.map(entity => {
+				const v = entity.vehicle.vehicle || {}
+				const t = entity.vehicle.trip || {}
+				return {
+					type: 'Feature',
+					properties: {
+						vehicleId: v.id,
+						vehicleLabel: v.label,
+						vehicleLicensePlate: v.license_plate,
+						trip_id: t.trip_id,
+						route_id: t.route_id,
+						start_date: t.start_date,
+						start_time: t.start_time,
+						delay: entity.vehicle.delay,
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [
+							entity.vehicle.position.longitude,
+							entity.vehicle.position.latitude,
+						],
+					},
+				}
+			}),
 		})
 
 		// fit map viewbox to data
@@ -147,6 +153,55 @@ class MapView extends Component {
 					'circle-color': VEHICLE_POINT_COLOR,
 				},
 			})
+
+			let popup = null
+			const showPopup = (e) => {
+				const feature = e.features[0]
+				if (!feature) return
+				const props = feature.properties
+
+				// Only show defined properties
+				const addProp = (label, value, code = true) => {
+					if (!value || value === 'null' || value === 'undefined') return ''
+					const displayValue = code ? `<code>${value}</code>` : value
+					return `${label}: ${displayValue}<br/>`
+				}
+
+				let vehicleSection = ''
+				vehicleSection += addProp('ID', props.vehicleId)
+				vehicleSection += addProp('Label', props.vehicleLabel)
+				vehicleSection += addProp('License Plate', props.vehicleLicensePlate)
+
+				let tripSection = ''
+				tripSection += addProp('ID', props.trip_id)
+				tripSection += addProp('Route', props.route_id)
+
+				const startDate = props.start_date.match(/^(\d{4})(\d{2})(\d{2})$/)
+				if (startDate && props.start_time) {
+					const start = new Date(Date.parse(`${startDate[1]}-${startDate[2]}-${startDate[3]}T${props.start_time}`))
+					// Default locale with short date/time
+					tripSection += addProp('Start', new Intl.DateTimeFormat(undefined, {
+						dateStyle: 'short',
+						timeStyle: 'short',
+					}).format(start), false)
+				}
+
+				let html = '<div>'
+				if (vehicleSection) {
+					html += '<b>Vehicle</b><br/>' + vehicleSection
+				}
+				if (tripSection) {
+					html += '<b>Trip</b><br/>' + tripSection
+				}
+				html += '</div>'
+
+				if (popup) popup.remove()
+				popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
+					.setLngLat(e.lngLat)
+					.setHTML(html)
+					.addTo(this.map)
+			}
+
 			this.map.on('mouseenter', 'vehicle-positions', () => {
 				this.map.getCanvas().style.cursor = 'pointer'
 			})
@@ -158,6 +213,14 @@ class MapView extends Component {
 				emit('focus-vehicle-id', vehicleId)
 				const tripId = e.features[0]?.properties.trip_id || null
 				emit('focus-trip-id', tripId)
+
+				showPopup(e)
+				const closeOnMapClick = () => {
+					if (popup) { popup.remove(); popup = null }
+					console.log('close popup on map click')
+					this.map.off('click', closeOnMapClick)
+				}
+				this.map.on('click', closeOnMapClick)
 			})
 
 			this.map.addSource('focused-trip-shape', {
