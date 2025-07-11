@@ -11,6 +11,9 @@
 		"transit"
 	],
 	"author": "Jannis R <mail@jannisr.de>",
+	"contributors": [
+		"eMerzh <brice@bmaron.net>"
+	],
 	"homepage": "https://github.com/derhuerst/gtfs-rt-inspector",
 	"repository": "derhuerst/gtfs-rt-inspector",
 	"bugs": "https://github.com/derhuerst/gtfs-rt-inspector/issues",
