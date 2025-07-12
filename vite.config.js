@@ -11,12 +11,5 @@ export default defineConfig(({ command, mode }) => {
 		},
 		plugins: [preact()],
 		base: '/gtfs-rt-inspector',
-		optimizeDeps: {
-			esbuildOptions: {
-				loader: {
-					'.js': 'jsx',
-				},
-			},
-		},
 	}
 })

@@ -17,6 +17,13 @@
 			"jsx": true
 		}
 	},
+	"overrides": [
+		{
+			"files": [
+				"**/*.jsx"
+			]
+		}
+	],
 	"rules": {
 		"no-unused-vars": "off"
 	}
