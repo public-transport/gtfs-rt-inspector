@@ -8,6 +8,7 @@ export default defineConfig(({ command, mode }) => {
 		// vite config
 		define: {
 			__MAPBOX_TOKEN__: JSON.stringify(env.MAPBOX_TOKEN),
+			__PROTOMAPS_TOKEN__: JSON.stringify(env.PROTOMAPS_TOKEN),
 		},
 		plugins: [preact()],
 		base: '/gtfs-rt-inspector',
