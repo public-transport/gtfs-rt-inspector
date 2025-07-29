@@ -6,7 +6,7 @@
 		"node": true
 	},
 	"globals": {
-		"__MAPBOX_TOKEN__": "readonly"
+		"__PROTOMAPS_TOKEN__": "readonly"
 	},
 	"parserOptions": {
 		"ecmaVersion": 2020,

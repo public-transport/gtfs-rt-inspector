@@ -1,8 +1,8 @@
 import {Component, createRef, h} from 'preact'
-import mapboxgl from 'mapbox-gl'
-// Mapbox GL JS currently doesn't support SVG icons
+import maplibre from 'maplibre-gl'
+// Maplibre GL JS currently doesn't support SVG icons
 import TRIP_SHAPE_ARROW_URL from '../assets/arrow.png'
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 // const TRIP_SHAPE_ARROW_URL = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100px' height='100px'%3E%3Cpath d='M10 15 L15 10 L70 50 L15 90 L10 85 L35 50 z' fill='%23e0e0e0' stroke='%23e0e0e0' stroke-width='10px' stroke-linejoin='round' /%3E%3C/svg%3E`
 
@@ -24,13 +24,6 @@ const FOCUSED_TRIP_SHAPE_OPACITY = {
 	base: .3,
 	stops: [[9, .3], [15, .8]],
 }
-
-mapboxgl.accessToken = __MAPBOX_TOKEN__
-// https://docs.mapbox.com/mapbox-gl-js/api/properties/#prewarm
-setTimeout(() => {
-	mapboxgl.prewarm()
-}, 100)
-
 
 // todo: sync map zoom & position with state
 class MapView extends Component {
@@ -78,7 +71,7 @@ class MapView extends Component {
 			positions[0].vehicle.position.longitude,
 			positions[0].vehicle.position.latitude,
 		]
-		const bounds = new mapboxgl.LngLatBounds(crd0, crd0)
+		const bounds = new maplibre.LngLatBounds(crd0, crd0)
 		for (const pos of positions) {
 			bounds.extend([
 				pos.vehicle.position.longitude,
@@ -122,10 +115,9 @@ class MapView extends Component {
 	componentDidMount() {
 		const {emit} = this.props
 
-		this.map = new mapboxgl.Map({
+		this.map = new maplibre.Map({
 			container: this.ref.current,
-			// todo
-			style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
+			style: `https://api.protomaps.com/styles/v5/black/en.json?key=${__PROTOMAPS_TOKEN__}`,
 			center: [-74.5, 40], // starting position [lng, lat]
 			zoom: 9 // starting zoom
 		})
