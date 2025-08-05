@@ -117,9 +117,7 @@ class MapView extends Component {
 
 		this.map = new maplibre.Map({
 			container: this.ref.current,
-			// free light tiles without an API_KEY https://demotiles.maplibre.org/style.json
-			// style: `https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${__MAPTILER_TOKEN__}`,
-			style: `https://api.protomaps.com/styles/v5/dark/en.json?key=${__PROTOMAPS_TOKEN__}`,
+			style: `https://api.protomaps.com/styles/v5/black/en.json?key=${__PROTOMAPS_TOKEN__}`,
 			center: [-74.5, 40], // starting position [lng, lat]
 			zoom: 9 // starting zoom
 		})
