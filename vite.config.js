@@ -10,6 +10,6 @@ export default defineConfig(({ command, mode }) => {
 			__PROTOMAPS_TOKEN__: JSON.stringify(env.PROTOMAPS_TOKEN),
 		},
 		plugins: [preact()],
-		base: '/gtfs-rt-inspector',
+		base: './',
 	}
 })
