@@ -4,6 +4,10 @@ import preact from "@preact/preset-vite";
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')
 
+	if (!env.PROTOMAPS_TOKEN) {
+		throw new Error('missing/empty $PROTOMAPS_TOKEN')
+	}
+
 	return {
 		// vite config
 		define: {
