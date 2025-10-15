@@ -20,7 +20,7 @@ jobs:
       - run: npm run lint
       - run: npm run build
         env:
-          MAPBOX_TOKEN: ${{secrets.MAPBOX_TOKEN}}
+          PROTOMAPS_TOKEN: ${{secrets.PROTOMAPS_TOKEN}}
       - name: deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
