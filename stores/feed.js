@@ -10,6 +10,7 @@ const CONTENT_TYPES = [
 	'application/octet-stream', // generic "binary" blob
 	// used by King County (https://kingcounty.gov/depts/transportation/metro/travel-options/bus/app-center/developer-resources.aspx)
 	'application/x-protobuf',
+	'application/x-google-protobuf', // used by Grand River Transit
 	'application/grtfeed', // used by TriMet
 ]
 
